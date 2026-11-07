@@ -1,24 +1,24 @@
 # HerHack - Project Progress & Architecture Summary
 
 ## 1. Overview
-HerHack is an AI-powered safety and incident response platform designed to facilitate emergency reporting, crowd-sourced safety tracking, and automated risk assessment.
+HerHack is an AI-powered safety and incident response platform designed to facilitate emergency reporting, crowd-sourced safety tracking, and automated risk assessment using Supabase (Cloud PostgreSQL + PostGIS).
 
 ---
 
-## 2. Completed Components
+## 2. Completed Architecture (Supabase-First)
 
 ### A. Database & PostGIS Setup ([`supabase/schema.sql`](supabase/schema.sql))
-- **PostGIS Extension**: Enabled (`CREATE EXTENSION IF NOT EXISTS postgis`) for high-precision geographic calculations.
+- **PostGIS Extension**: Enabled (`CREATE EXTENSION IF NOT EXISTS postgis`) for high-precision geographic spatial computations.
 - **Three Core Tables**:
-  - **`profiles`**: Linked to Supabase Auth `auth.users`, storing user contact info, profile avatars, and emergency contacts JSON.
-  - **`incidents`**: Tracks safety events with latitude, longitude, and a native PostGIS `GEOGRAPHY(Point, 4326)` column with a **GIST spatial index** for sub-second proximity queries.
-  - **`reports`**: Stores evidence, witness testimonies, photo arrays (`photo_urls`), and AI risk scoring metadata.
+  - **`profiles`**: `(name, role, civic_score, phone_number, avatar_url, emergency_contacts)` linked to Supabase Auth.
+  - **`incidents`**: `(type, severity, location [Point], latitude, longitude, status, confirmed_count, time)` with a **GIST spatial index** (`idx_incidents_location`).
+  - **`reports`**: `(incident_id, user_id, before_photo, after_photo, details, time, ai_risk_score, ai_metadata)`.
 - **Photos Storage Bucket**:
-  - Automatically provisions the `photos` public storage bucket in `storage.buckets`.
-- **Proximity Stored Procedure (`get_nearby_incidents`)**:
-  - PostGIS SQL function utilizing `ST_DWithin` and `ST_Distance` to query incidents within any radius (in meters) sorted by distance.
+  - Auto-provisioned `photos` public storage bucket in `storage.buckets`.
+- **Proximity Stored Function (`get_nearby_incidents`)**:
+  - PostGIS SQL function executing `ST_DWithin` and `ST_Distance` to query incidents within any radius (in meters) sorted by distance.
 - **Row-Level Security (RLS)**:
-  - Enabled on `profiles`, `incidents`, `reports`, and `storage.objects` with authenticated and public policies.
+  - Enabled on `profiles`, `incidents`, `reports`, and storage objects.
 
 ---
 
@@ -42,43 +42,25 @@ HerHack/
 │   └── requirements.txt
 ├── supabase/
 │   └── schema.sql      # Database migrations & PostGIS setup
-├── .gitignore          # Strict exclusion rules
+├── .gitignore          # Strict exclusion rules (.env, uploads, venv, node_modules)
 └── SECURITY.md         # Zero-hardcoding and environment security policy
 ```
 
 ---
 
 ### C. Security & Zero-Hardcoding Policy ([`SECURITY.md`](SECURITY.md))
-- **No hardcoded URLs or secret keys** exist in any code file.
-- All secrets and service endpoints are strictly managed through environment variables (`.env`).
-- **`.gitignore`** is configured and verified to exclude:
-  - `.env`, `.env*`, and `*.env` (preserving `.env.example` templates)
-  - `uploads/` and `*/uploads/`
-  - `venv/`, `.venv/`, and `env/`
-  - `node_modules/` and build directories.
+- **Zero hardcoded secrets or URLs** in code.
+- Dynamic environment loading via `.env` with templates committed in `.env.example`.
+- `.gitignore` ignores all `.env*` files, local upload files, venvs, and node_modules.
 
 ---
 
-### D. API Endpoints Implemented
-
-| Service | Method | Route | Description |
-|---|---|---|---|
-| **Backend** | `GET` | `/` | Health check |
-| **Backend** | `GET` | `/api/incidents` | List incidents (filter by status/category) |
-| **Backend** | `GET` | `/api/incidents/nearby` | Query nearby incidents via PostGIS radius RPC |
-| **Backend** | `GET` | `/api/incidents/{id}` | Retrieve incident details |
-| **Backend** | `POST` | `/api/incidents` | Create incident (auto-formats PostGIS Point) |
-| **Backend** | `GET` | `/api/profiles/{id}` | Fetch user profile |
-| **Backend** | `POST` | `/api/profiles` | Create/update user profile |
-| **Backend** | `GET` | `/api/reports` | List reports by incident ID |
-| **Backend** | `POST` | `/api/reports` | Submit incident report with photo URLs |
-| **Backend** | `POST` | `/api/photos/upload` | Upload image directly to Supabase `photos` bucket |
-| **AI Service** | `POST` | `/analyze` | Run threat & risk score assessment |
-
----
-
-## 3. Remote Synchronization
-- **Repository**: [https://github.com/jaya030888/HerHack.git](https://github.com/jaya030888/HerHack.git)
-- **Branch**: `main`
-- All architectural commits, schema definitions, and services are synced.
-
+### D. Connecting DBeaver / pgAdmin Directly to Supabase
+You can connect DBeaver or pgAdmin directly to your Supabase PostgreSQL cloud database without local Docker:
+1. In Supabase Dashboard, go to **Project Settings** -> **Database**.
+2. Under **Connection string**, select **URI** or **Parameters**:
+   - **Host**: `db.<your-project-ref>.supabase.co`
+   - **Port**: `5432` (or `6543` for connection pooling)
+   - **Database**: `postgres`
+   - **User**: `postgres`
+   - **Password**: Your database password chosen at project creation.
