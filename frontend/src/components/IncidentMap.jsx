@@ -112,3 +112,4 @@ export default function IncidentMap({ incidents = [], selectedLocation, onSelect
     </div>
   );
 }
+
