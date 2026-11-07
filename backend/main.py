@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from config import settings
 from database import supabase
-from routers import profiles, incidents, reports, ai
+from routers import profiles, incidents, reports, ai, civic
 import storage
 
 app = FastAPI(
@@ -24,6 +24,7 @@ app.include_router(profiles.router)
 app.include_router(incidents.router)
 app.include_router(reports.router)
 app.include_router(ai.router)
+app.include_router(civic.router)
 
 @app.get("/")
 def health_check():
@@ -50,13 +51,23 @@ async def report(
     latitude: float = Form(..., ge=-90, le=90),
     longitude: float = Form(..., ge=-180, le=180),
 ):
-    """Upload a photo and create an incident + report (dummy type/severity for now)."""
+    """
+    Step 7 Integration: Upload a photo, run YOLOv8 detection to determine real type and severity,
+    and create the incident + report in Supabase.
+    """
     try:
-        photo_url = storage.upload_photo(await photo.read(), photo.filename, photo.content_type)
+        content = await photo.read()
+        photo_url = storage.upload_photo(content, photo.filename, photo.content_type)
+
+        # Step 7: Real AI inference replaces dummy placeholders
+        from ai_engine import run_hazard_detection
+        ai_result = run_hazard_detection(content)
+        predicted_type = ai_result.get("type", "pothole")
+        calculated_severity = ai_result.get("severity", "medium")
 
         incident = supabase.table("incidents").insert({
-            "type": "pothole",      # dummy for now
-            "severity": "medium",   # dummy for now
+            "type": predicted_type,
+            "severity": calculated_severity,
             "latitude": latitude,
             "longitude": longitude,
             # PostGIS: longitude FIRST, then latitude
@@ -66,9 +77,14 @@ async def report(
         rep = supabase.table("reports").insert({
             "incident_id": incident["id"],
             "before_photo": photo_url,
+            "detected_objects": ai_result.get("detected_objects", [])
         }).execute().data[0]
 
-        return {"incident": incident, "report": rep}
+        return {
+            "incident": incident,
+            "report": rep,
+            "ai_inference": ai_result
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
