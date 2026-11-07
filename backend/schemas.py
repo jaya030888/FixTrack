@@ -36,7 +36,8 @@ class IncidentCreate(IncidentBase):
 class IncidentResponse(IncidentBase):
     id: uuid.UUID
     user_id: Optional[uuid.UUID] = None
-    time: datetime
+    incident_time: Optional[datetime] = None
+    time: Optional[datetime] = None
     created_at: datetime
     updated_at: datetime
 
@@ -46,7 +47,7 @@ class ReportBase(BaseModel):
     before_photo: Optional[str] = None
     after_photo: Optional[str] = None
     details: Optional[str] = None
-    detected_objects: Optional[List[Dict[str, Any]]] = Field(default_factory=list)  # YOLO detections
+    detected_objects: Optional[List[Dict[str, Any]]] = Field(default_factory=list)
     clip_similarity_score: Optional[float] = None
 
 class ReportCreate(ReportBase):
@@ -55,5 +56,6 @@ class ReportCreate(ReportBase):
 class ReportResponse(ReportBase):
     id: uuid.UUID
     user_id: Optional[uuid.UUID] = None
-    time: datetime
+    report_time: Optional[datetime] = None
+    time: Optional[datetime] = None
     created_at: datetime
