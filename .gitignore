@@ -1,22 +1,26 @@
-# Environment variables (NEVER COMMIT SENSITIVE SECRETS)
+# Environment and Secret Files
 .env
-.env.local
-.env.*.local
+.env*
+!.env.example
 *.env
 
-# Dependencies
-node_modules/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
+# Uploads and Temporary Storage
+uploads/
+*/uploads/
+
+# Virtual Environments
 venv/
 .venv/
+env/
 
-# Build artifacts
+# Node Dependencies and Artifacts
+node_modules/
 dist/
 build/
+
+# Python Cache and Build Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
 *.egg-info/
 .pytest_cache/

@@ -50,3 +50,4 @@ async def upload_photo(file: UploadFile = File(...)):
         return {"file_path": file_path, "url": public_url}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+

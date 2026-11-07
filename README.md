@@ -77,3 +77,4 @@ HOST=0.0.0.0
 MODEL_NAME=safety-threat-detector-v1
 CONFIDENCE_THRESHOLD=0.75
 ```
+

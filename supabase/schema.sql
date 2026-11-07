@@ -117,3 +117,4 @@ CREATE POLICY "Users can update/delete their own photos"
 ON storage.objects FOR DELETE
 TO authenticated
 USING (bucket_id = 'photos' AND auth.uid()::text = (storage.foldername(name))[1]);
+

@@ -38,3 +38,4 @@ def analyze_incident(req: AnalyzeRequest):
         flagged=score >= THRESHOLD,
         summary=f"Analysis completed for type: {req.incident_type}"
     )
+
