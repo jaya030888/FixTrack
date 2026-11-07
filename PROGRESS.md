@@ -1,7 +1,7 @@
-# HerHack - Project Progress & Architecture Summary
+# HerHack / FixTrack - Project Progress & Architecture Summary
 
 ## 1. Overview
-HerHack is an AI-powered safety and incident response platform designed to facilitate emergency reporting, crowd-sourced safety tracking, and automated risk assessment using Supabase (Cloud PostgreSQL + PostGIS).
+FixTrack (HerHack) is an AI-powered safety and incident response platform designed for women's safety, civic hazard reporting, crowd-sourced tracking, and real-time risk assessment using Supabase (Cloud PostgreSQL + PostGIS) and microservices.
 
 ---
 
@@ -25,20 +25,38 @@ HerHack is an AI-powered safety and incident response platform designed to facil
 ### B. Microservices & Repository Architecture
 
 ```
-HerHack/
+FixTrack/
 ├── backend/            # FastAPI REST backend
-│   ├── routers/        # Modular endpoints (profiles, incidents, reports)
-│   ├── config.py       # Pydantic environment configuration
+│   ├── routers/        # Modular endpoints (incidents, profiles, reports, ai)
+│   ├── config.py       # Pydantic environment configuration (with fallback defaults)
 │   ├── database.py     # Supabase client instantiation
+│   ├── storage.py      # Supabase Storage helpers
 │   ├── schemas.py      # Pydantic data validation models
-│   ├── main.py         # Entrypoint + Photo upload endpoint
+│   ├── main.py         # Entrypoint + Photo upload + YOLO & PostGIS routes
 │   └── requirements.txt
-├── frontend/           # Vite + React web application
-│   ├── src/services/   # Supabase client & photo upload utilities
-│   ├── package.json
-│   └── src/App.jsx     # Frontend dashboard entry
-├── ai-service/         # Dedicated ML/Threat assessment service
-│   ├── main.py         # Threat heuristic and model scoring endpoint
+├── frontend/           # Full Safety & Incident Frontend
+│   ├── src/            # Interactive Women's Safety & Civic Platform
+│   │   ├── components/
+│   │   │   ├── Navbar.jsx            # Dynamic top navigation & GPS coordinate chip
+│   │   │   ├── IncidentMap.jsx       # SVG spatial radar, proximity circles & live feed
+│   │   │   ├── SafeWalk.jsx          # Timed guardian companion & neighborhood index
+│   │   │   ├── ReportForm.jsx        # Hazard reporting with real-time AI threat scoring
+│   │   │   ├── SafetyTools.jsx       # One-touch SOS, Web Audio siren, voice guard & fake call
+│   │   │   ├── EmergencyContacts.jsx # 1-click WhatsApp/SMS GPS distress links
+│   │   │   ├── AIAnalyzer.jsx        # Multilingual ML risk tier classifier
+│   │   │   └── DiscreetMode.jsx      # Secret calculator disguise with covert SOS PIN
+│   │   ├── services/
+│   │   │   ├── api.js                # Unified API service with offline resilience
+│   │   │   └── supabase.js           # Supabase client & photo upload helper
+│   │   ├── App.jsx                   # Central state machine & SOS modal orchestrator
+│   │   ├── index.css                 # Dark theme, glassmorphism cards & SOS strobe
+│   │   └── main.jsx
+│   ├── app/            # Next.js App Router & Leaflet Map integration
+│   ├── index.html
+│   ├── vite.config.js
+│   └── package.json
+├── ai-service/         # Dedicated ML/Threat assessment microservice
+│   ├── main.py         # Multilingual (English + Hindi) keyword inference & CORS
 │   └── requirements.txt
 ├── supabase/
 │   └── schema.sql      # Database migrations & PostGIS setup
@@ -49,18 +67,31 @@ HerHack/
 ---
 
 ### C. Security & Zero-Hardcoding Policy ([`SECURITY.md`](SECURITY.md))
-- **Zero hardcoded secrets or URLs** in code.
-- Dynamic environment loading via `.env` with templates committed in `.env.example`.
-- `.gitignore` ignores all `.env*` files, local upload files, venvs, and node_modules.
+- **No hardcoded credentials**: All keys and tokens are strictly configured through `.env` files.
+- **`.gitignore`** is configured and verified to exclude `.env`, `.env*`, `node_modules/`, and `dist/`.
 
 ---
 
-### D. Connecting DBeaver / pgAdmin Directly to Supabase
-You can connect DBeaver or pgAdmin directly to your Supabase PostgreSQL cloud database without local Docker:
-1. In Supabase Dashboard, go to **Project Settings** -> **Database**.
-2. Under **Connection string**, select **URI** or **Parameters**:
-   - **Host**: `db.<your-project-ref>.supabase.co`
-   - **Port**: `5432` (or `6543` for connection pooling)
-   - **Database**: `postgres`
-   - **User**: `postgres`
-   - **Password**: Your database password chosen at project creation.
+### D. Implemented API Endpoints
+
+| Service | Method | Route | Description |
+|---|---|---|---|
+| **Backend** | `GET` | `/` | Health check |
+| **Backend** | `GET` | `/api/incidents` | List incidents (filter by status/category) |
+| **Backend** | `GET` | `/api/incidents/nearby` | Query nearby incidents via PostGIS radius RPC |
+| **Backend** | `GET` | `/api/incidents/stats/summary` | Aggregate counts by severity and category |
+| **Backend** | `POST` | `/api/incidents` | Create incident (auto-formats PostGIS Point) |
+| **Backend** | `POST` | `/api/incidents/sos` | High-priority SOS distress beacon endpoint |
+| **Backend** | `POST` | `/report` | Photo upload + incident creation |
+| **Backend** | `POST` | `/api/ai/detect` | YOLOv8 hazard & object detection |
+| **Backend** | `POST` | `/api/photos/upload` | Upload image directly to Supabase `photos` bucket |
+| **AI Service** | `GET` | `/` | Service health & active model info |
+| **AI Service** | `POST` | `/analyze` | Multilingual threat scoring & escalation classification |
+
+---
+
+## 3. Remote Synchronization
+- **Repository**: [https://github.com/jaya030888/FixTrack.git](https://github.com/jaya030888/FixTrack.git)
+- **Active Branch**: `Chandani`
+- **Main Branch**: Left untouched as per user specifications.
+- **Status**: Pulled from `origin/main` into `Chandani`, conflicts resolved, up-to-date with both origin branches.
