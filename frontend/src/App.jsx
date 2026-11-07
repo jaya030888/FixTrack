@@ -7,6 +7,7 @@ import EmergencyContacts from './components/EmergencyContacts';
 import AIAnalyzer from './components/AIAnalyzer';
 import SafeWalk from './components/SafeWalk';
 import DiscreetMode from './components/DiscreetMode';
+import AuthBar, { DEMO_ACCOUNTS } from './components/AuthBar';
 import { getIncidents, createIncident } from './services/api';
 
 export default function App() {
@@ -16,6 +17,14 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const [sosModal, setSosModal] = useState(false);
   const [isDiscreetMode, setIsDiscreetMode] = useState(false);
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('fixtrack_user');
+      return saved ? JSON.parse(saved) : DEMO_ACCOUNTS.citizen;
+    } catch {
+      return DEMO_ACCOUNTS.citizen;
+    }
+  });
 
   // Helper for toast messages
   const showToast = (message, type = 'info') => {
@@ -118,6 +127,9 @@ export default function App() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
       {/* Navigation */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0.5rem 1rem 0 1rem' }}>
+        <AuthBar currentUser={currentUser} onUserChange={setCurrentUser} />
+      </div>
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
