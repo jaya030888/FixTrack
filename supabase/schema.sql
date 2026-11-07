@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 3. Incidents Table: (type, severity, location, status, confirmed count, time)
+-- 3. Incidents Table: (type, severity, location, status, confirmed count, incident_time)
 CREATE TABLE IF NOT EXISTS public.incidents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS public.incidents (
     address TEXT,
     status TEXT DEFAULT 'open', -- 'open', 'investigating', 'in_progress', 'resolved', 'dismissed'
     confirmed_count INTEGER DEFAULT 1,
-    time TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
+    incident_time TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS public.incidents (
 -- 4. High-Performance Spatial Index for Location Queries (e.g. "within 30 meters")
 CREATE INDEX IF NOT EXISTS idx_incidents_location ON public.incidents USING GIST (location);
 
--- 5. Reports Table: (incident, user, before photo, after photo, time)
+-- 5. Reports Table: (incident, user, before photo, after photo, report_time)
 CREATE TABLE IF NOT EXISTS public.reports (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     incident_id UUID REFERENCES public.incidents(id) ON DELETE CASCADE,
@@ -48,9 +48,9 @@ CREATE TABLE IF NOT EXISTS public.reports (
     before_photo TEXT,
     after_photo TEXT,
     details TEXT,
-    detected_objects JSONB DEFAULT '[]'::jsonb, -- YOLOv8 bounding boxes & confidence (e.g. pothole, garbage)
+    detected_objects JSONB DEFAULT '[]'::jsonb, -- YOLOv8 bounding boxes & confidence
     clip_similarity_score DOUBLE PRECISION,     -- CLIP before/after verification score
-    time TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
+    report_time TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -70,7 +70,7 @@ RETURNS TABLE (
     status TEXT,
     confirmed_count INTEGER,
     distance_meters DOUBLE PRECISION,
-    time TIMESTAMPTZ,
+    incident_time TIMESTAMPTZ,
     created_at TIMESTAMPTZ
 )
 LANGUAGE sql
@@ -87,7 +87,7 @@ AS $$
         i.status,
         i.confirmed_count,
         ST_Distance(i.location, ST_SetSRID(ST_MakePoint(lng, lat), 4326)::geography) AS distance_meters,
-        i.time,
+        i.incident_time,
         i.created_at
     FROM public.incidents i
     WHERE ST_DWithin(i.location, ST_SetSRID(ST_MakePoint(lng, lat), 4326)::geography, radius_meters)
