@@ -7,6 +7,7 @@ import EmergencyContacts from './components/EmergencyContacts';
 import AIAnalyzer from './components/AIAnalyzer';
 import SafeWalk from './components/SafeWalk';
 import DiscreetMode from './components/DiscreetMode';
+import AdvancedFeaturesShowcase from './components/AdvancedFeaturesShowcase';
 import AuthBar, { DEMO_ACCOUNTS } from './components/AuthBar';
 import { getIncidents, createIncident } from './services/api';
 
@@ -161,6 +162,12 @@ export default function App() {
             userLocation={userLocation}
             onIncidentCreated={handleIncidentCreated}
             onCancel={() => setActiveTab('incidents')}
+          />
+        )}
+
+        {activeTab === 'showcase' && (
+          <AdvancedFeaturesShowcase
+            userLocation={userLocation}
           />
         )}
 
