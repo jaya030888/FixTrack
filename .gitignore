@@ -1,0 +1,22 @@
+# Environment variables (NEVER COMMIT SENSITIVE SECRETS)
+.env
+.env.local
+.env.*.local
+*.env
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+.pytest_cache/
