@@ -26,3 +26,4 @@ def create_report(report: ReportCreate):
     if not res.data:
         raise HTTPException(status_code=400, detail="Failed to create report")
     return res.data[0]
+

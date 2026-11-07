@@ -14,3 +14,4 @@
    - **Frontend**: Accessible via `import.meta.env.VITE_*` (e.g. `VITE_API_BASE_URL`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`).
    - **Backend**: Managed via Pydantic `BaseSettings` reading `.env` (e.g. `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `AI_SERVICE_URL`).
    - **AI Service**: Loaded via `python-dotenv` and `os.getenv` (e.g. `MODEL_NAME`, `CONFIDENCE_THRESHOLD`, `PORT`).
+

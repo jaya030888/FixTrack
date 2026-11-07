@@ -81,3 +81,4 @@ HerHack/
 - **Repository**: [https://github.com/jaya030888/HerHack.git](https://github.com/jaya030888/HerHack.git)
 - **Branch**: `main`
 - All architectural commits, schema definitions, and services are synced.
+

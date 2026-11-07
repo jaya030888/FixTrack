@@ -22,3 +22,4 @@ def create_or_update_profile(profile: ProfileCreate):
     if not res.data:
         raise HTTPException(status_code=400, detail="Could not save profile")
     return res.data[0]
+
