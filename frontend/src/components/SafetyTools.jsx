@@ -4,11 +4,14 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
   const [isSirenPlaying, setIsSirenPlaying] = useState(false);
   const [fakeCallActive, setFakeCallActive] = useState(false);
   const [fakeCallCountdown, setFakeCallCountdown] = useState(null);
+  const [isListeningVoice, setIsListeningVoice] = useState(false);
+  const [voiceDetectedKeyword, setVoiceDetectedKeyword] = useState(null);
   
   const audioContextRef = useRef(null);
   const oscillatorRef = useRef(null);
   const gainNodeRef = useRef(null);
   const sirenIntervalRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   // Siren synthesis using Web Audio API
   const startSiren = () => {
@@ -64,8 +67,76 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
   useEffect(() => {
     return () => {
       stopSiren();
+      if (recognitionRef.current) {
+        try { recognitionRef.current.stop(); } catch (e) {}
+      }
     };
   }, []);
+
+  // Hands-free Voice Distress Recognition
+  const toggleVoiceSOS = () => {
+    if (isListeningVoice) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      setIsListeningVoice(false);
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Speech Recognition is not supported by this browser. Please use Chrome, Edge, or Safari.');
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-IN';
+
+      recognition.onstart = () => {
+        setIsListeningVoice(true);
+      };
+
+      recognition.onresult = (event) => {
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          const transcript = event.results[i][0].transcript.toLowerCase();
+          const triggers = ['help', 'bachao', 'police', 'save me', 'madad', 'emergency'];
+          
+          for (const word of triggers) {
+            if (transcript.includes(word)) {
+              setVoiceDetectedKeyword(word);
+              triggerSOS();
+              startSiren();
+              setTimeout(() => setVoiceDetectedKeyword(null), 4000);
+              break;
+            }
+          }
+        }
+      };
+
+      recognition.onerror = (err) => {
+        console.warn('Speech recognition warning:', err.error);
+        if (err.error === 'not-allowed') {
+          alert('Microphone permission denied. Please allow microphone access for hands-free voice SOS.');
+          setIsListeningVoice(false);
+        }
+      };
+
+      recognition.onend = () => {
+        // Auto restart if still marked as listening
+        if (isListeningVoice && recognitionRef.current) {
+          try { recognition.start(); } catch (e) {}
+        }
+      };
+
+      recognition.start();
+      recognitionRef.current = recognition;
+    } catch (err) {
+      alert('Failed to initialize voice recognition: ' + err.message);
+    }
+  };
 
   // Fake Call Simulator
   const scheduleFakeCall = (seconds = 5) => {
@@ -97,6 +168,23 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 1rem 3rem 1rem' }}>
       
+      {/* Voice Trigger Alert Banner */}
+      {voiceDetectedKeyword && (
+        <div style={{
+          background: '#ef4444',
+          color: '#fff',
+          padding: '1rem',
+          borderRadius: '12px',
+          textAlign: 'center',
+          fontWeight: '800',
+          fontSize: '1.1rem',
+          marginBottom: '1.5rem',
+          boxShadow: '0 0 25px rgba(239, 68, 68, 0.6)'
+        }}>
+          🚨 VOICE DISTRESS DETECTED: "{voiceDetectedKeyword.toUpperCase()}" - SOS BROADCASTED!
+        </div>
+      )}
+
       {/* Fake Call Overlay Screen */}
       {fakeCallActive && (
         <div style={{
@@ -244,6 +332,33 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
           </div>
         </div>
 
+        {/* Hands-Free Voice SOS Listener */}
+        <div className="glass-panel" style={{ padding: '2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+            <span style={{ fontSize: '1.4rem' }}>🎙️</span>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#fff' }}>
+              Hands-Free Voice SOS
+            </h2>
+          </div>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+            Can't reach your screen? Activate hands-free voice guard. Shouting "Help" or "Bachao" immediately triggers SOS.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <button
+              onClick={toggleVoiceSOS}
+              className={`btn ${isListeningVoice ? 'btn-danger' : 'btn-secondary'}`}
+              style={{ width: '100%', padding: '0.8rem', justifyContent: 'center' }}>
+              {isListeningVoice ? '🔴 Stop Voice Guard (Listening Active)' : '🟢 Turn On Hands-Free Voice SOS'}
+            </button>
+
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', lineHeight: '1.4', background: 'rgba(15, 23, 42, 0.5)', padding: '0.65rem', borderRadius: '8px' }}>
+              <span>Trigger phrases:</span>
+              <strong style={{ color: '#f43f5e' }}> "Help", "Bachao", "Police", "Save me", "Madad"</strong>
+            </div>
+          </div>
+        </div>
+
         {/* Fake Incoming Call Simulator */}
         <div className="glass-panel" style={{ padding: '2rem' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#fff', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -282,7 +397,7 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
         </div>
 
         {/* Emergency Helpline Directory */}
-        <div className="glass-panel" style={{ padding: '2rem' }}>
+        <div className="glass-panel" style={{ padding: '2rem', gridColumn: '1 / -1' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#fff', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span>⚡</span> Direct Emergency Helplines
           </h2>
@@ -290,7 +405,7 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
             One-touch instant direct dial to national emergency and crisis teams.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
             {helplines.map((item, idx) => (
               <a
                 key={idx}
@@ -327,4 +442,3 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
     </div>
   );
 }
-
