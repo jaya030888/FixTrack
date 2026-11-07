@@ -333,3 +333,4 @@ export default function IncidentMap({ incidents, userLocation, onSelectIncident,
     </div>
   );
 }
+

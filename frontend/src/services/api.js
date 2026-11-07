@@ -275,3 +275,4 @@ export async function uploadEvidencePhoto(file) {
     reader.readAsDataURL(file);
   });
 }
+

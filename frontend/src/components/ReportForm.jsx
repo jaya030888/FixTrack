@@ -359,3 +359,4 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
     </div>
   );
 }
+

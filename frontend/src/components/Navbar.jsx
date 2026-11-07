@@ -131,3 +131,4 @@ export default function Navbar({ activeTab, setActiveTab, userLocation, triggerS
     </header>
   );
 }
+

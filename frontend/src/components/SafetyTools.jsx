@@ -327,3 +327,4 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
     </div>
   );
 }
+
