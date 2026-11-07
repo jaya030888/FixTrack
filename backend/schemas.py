@@ -54,3 +54,4 @@ class ReportResponse(ReportBase):
     id: uuid.UUID
     reporter_id: Optional[uuid.UUID] = None
     created_at: datetime
+

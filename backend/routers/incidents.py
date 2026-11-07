@@ -1,0 +1,37 @@
+from fastapi import APIRouter, HTTPException, Query
+from config import settings
+from database import supabase
+from schemas import IncidentCreate, IncidentResponse
+from typing import List, Optional
+import uuid
+
+router = APIRouter(prefix="/api/incidents", tags=["Incidents"])
+
+@router.get("/", response_model=List[IncidentResponse])
+def list_incidents(status: Optional[str] = None, category: Optional[str] = None):
+    query = supabase.table("incidents").select("*")
+    if status:
+        query = query.eq("status", status)
+    if category:
+        query = query.eq("category", category)
+    res = query.order("created_at", desc=True).execute()
+    return res.data
+
+@router.get("/{incident_id}", response_model=IncidentResponse)
+def get_incident(incident_id: uuid.UUID):
+    res = supabase.table("incidents").select("*").eq("id", str(incident_id)).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="Incident not found")
+    return res.data[0]
+
+@router.post("/", response_model=IncidentResponse)
+def create_incident(incident: IncidentCreate):
+    data = incident.dict()
+    if data.get("user_id"):
+        data["user_id"] = str(data["user_id"])
+    # Format PostGIS Point: POINT(long lat)
+    data["location"] = f"POINT({incident.longitude} {incident.latitude})"
+    res = supabase.table("incidents").insert(data).execute()
+    if not res.data:
+        raise HTTPException(status_code=400, detail="Failed to create incident")
+    return res.data[0]
