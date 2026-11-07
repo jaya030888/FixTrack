@@ -5,6 +5,8 @@ import ReportForm from './components/ReportForm';
 import SafetyTools from './components/SafetyTools';
 import EmergencyContacts from './components/EmergencyContacts';
 import AIAnalyzer from './components/AIAnalyzer';
+import SafeWalk from './components/SafeWalk';
+import DiscreetMode from './components/DiscreetMode';
 import { getIncidents, createIncident } from './services/api';
 
 export default function App() {
@@ -13,6 +15,7 @@ export default function App() {
   const [incidents, setIncidents] = useState([]);
   const [toast, setToast] = useState(null);
   const [sosModal, setSosModal] = useState(false);
+  const [isDiscreetMode, setIsDiscreetMode] = useState(false);
 
   // Helper for toast messages
   const showToast = (message, type = 'info') => {
@@ -25,7 +28,6 @@ export default function App() {
   // Acquire user location
   const refreshLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      // Fallback default (Delhi central)
       setUserLocation({ latitude: 28.6139, longitude: 77.2090 });
       return;
     }
@@ -41,7 +43,6 @@ export default function App() {
       },
       (err) => {
         console.warn('Geolocation warning:', err.message);
-        // Fallback default coordinates
         setUserLocation({ latitude: 28.6139, longitude: 77.2090 });
       },
       { enableHighAccuracy: true, timeout: 8000 }
@@ -86,7 +87,9 @@ export default function App() {
 
       const created = await createIncident(sosIncident);
       setIncidents(prev => [created, ...prev]);
-      setSosModal(true);
+      if (!isDiscreetMode) {
+        setSosModal(true);
+      }
       showToast('🚨 SOS BEACON BROADCASTED!', 'danger');
     } catch (err) {
       showToast('Failed to broadcast SOS: ' + err.message, 'danger');
@@ -99,6 +102,18 @@ export default function App() {
     setActiveTab('incidents');
   };
 
+  // If in discreet disguise mode, show calculator
+  if (isDiscreetMode) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+        <DiscreetMode
+          onExit={() => setIsDiscreetMode(false)}
+          triggerSOS={handleTriggerSOS}
+        />
+      </div>
+    );
+  }
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
@@ -109,6 +124,7 @@ export default function App() {
         userLocation={userLocation}
         triggerSOS={handleTriggerSOS}
         onRefreshLocation={refreshLocation}
+        onToggleDiscreet={() => setIsDiscreetMode(true)}
       />
 
       {/* Main Tab Content */}
@@ -118,6 +134,13 @@ export default function App() {
             incidents={incidents}
             userLocation={userLocation}
             onNewReportClick={() => setActiveTab('report')}
+          />
+        )}
+
+        {activeTab === 'safewalk' && (
+          <SafeWalk
+            userLocation={userLocation}
+            triggerSOS={handleTriggerSOS}
           />
         )}
 

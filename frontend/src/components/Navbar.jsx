@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Navbar({ activeTab, setActiveTab, userLocation, triggerSOS, onRefreshLocation }) {
+export default function Navbar({ activeTab, setActiveTab, userLocation, triggerSOS, onRefreshLocation, onToggleDiscreet }) {
   return (
     <header className="glass-panel" style={{ margin: '1rem', padding: '0.85rem 1.5rem', position: 'sticky', top: '1rem', zIndex: 100 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
@@ -36,8 +36,10 @@ export default function Navbar({ activeTab, setActiveTab, userLocation, triggerS
           </div>
         </div>
 
-        {/* Location & Branch Info */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.8rem' }}>
+        {/* Location & Controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', fontSize: '0.8rem', flexWrap: 'wrap' }}>
+          
+          {/* GPS Coordinates Chip */}
           <div style={{
             background: 'rgba(15, 23, 42, 0.7)',
             padding: '0.35rem 0.75rem',
@@ -62,6 +64,7 @@ export default function Navbar({ activeTab, setActiveTab, userLocation, triggerS
             </button>
           </div>
 
+          {/* Branch Tag */}
           <div style={{
             background: 'rgba(99, 102, 241, 0.15)',
             border: '1px solid rgba(99, 102, 241, 0.3)',
@@ -74,7 +77,16 @@ export default function Navbar({ activeTab, setActiveTab, userLocation, triggerS
             🌿 Chandani
           </div>
 
-          {/* Instant SOS button in header */}
+          {/* Disguise Mode Switcher */}
+          <button
+            onClick={onToggleDiscreet}
+            className="btn btn-secondary"
+            title="Switch to Innocent Calculator Disguise"
+            style={{ fontSize: '0.75rem', padding: '0.35rem 0.7rem' }}>
+            🎭 Disguise Mode
+          </button>
+
+          {/* Instant SOS Panic Button */}
           <button 
             onClick={triggerSOS}
             className="btn btn-danger animate-pulse-sos"
@@ -100,6 +112,7 @@ export default function Navbar({ activeTab, setActiveTab, userLocation, triggerS
       }}>
         {[
           { id: 'incidents', label: 'Incident Radar & Map', icon: '🚨' },
+          { id: 'safewalk', label: 'SafeWalk Guardian', icon: '🚶‍♀️' },
           { id: 'report', label: 'Report Incident', icon: '📢' },
           { id: 'safety', label: 'Safety Tools & Siren', icon: '🛡️' },
           { id: 'contacts', label: 'Emergency Contacts', icon: '👥' },
@@ -131,4 +144,3 @@ export default function Navbar({ activeTab, setActiveTab, userLocation, triggerS
     </header>
   );
 }
-
