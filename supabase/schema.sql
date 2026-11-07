@@ -1,5 +1,7 @@
 -- ==============================================================================
--- HerHack Supabase Database Schema & Setup
+-- HerHack Supabase Complete Schema
+-- Civic Issue & Safety Response Platform
+-- (Potholes, Garbage, Harassment, Street Hazards)
 -- ==============================================================================
 
 -- 1. Enable PostGIS Extension
@@ -22,20 +24,20 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 CREATE TABLE IF NOT EXISTS public.incidents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
-    type TEXT NOT NULL, -- e.g. 'harassment', 'theft', 'unsafe_area', 'sos'
+    type TEXT NOT NULL, -- e.g. 'pothole', 'garbage', 'harassment', 'unsafe_area', 'street_light'
     severity TEXT DEFAULT 'medium', -- 'low', 'medium', 'high', 'critical'
     location GEOGRAPHY(Point, 4326) NOT NULL,
     latitude DOUBLE PRECISION NOT NULL,
     longitude DOUBLE PRECISION NOT NULL,
     address TEXT,
-    status TEXT DEFAULT 'open', -- 'open', 'investigating', 'resolved', 'dismissed'
+    status TEXT DEFAULT 'open', -- 'open', 'investigating', 'in_progress', 'resolved', 'dismissed'
     confirmed_count INTEGER DEFAULT 1,
     time TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 4. Spatial GIST Index on incidents.location
+-- 4. High-Performance Spatial Index for Location Queries (e.g. "within 30 meters")
 CREATE INDEX IF NOT EXISTS idx_incidents_location ON public.incidents USING GIST (location);
 
 -- 5. Reports Table: (incident, user, before photo, after photo, time)
@@ -46,17 +48,17 @@ CREATE TABLE IF NOT EXISTS public.reports (
     before_photo TEXT,
     after_photo TEXT,
     details TEXT,
+    detected_objects JSONB DEFAULT '[]'::jsonb, -- YOLOv8 bounding boxes & confidence (e.g. pothole, garbage)
+    clip_similarity_score DOUBLE PRECISION,     -- CLIP before/after verification score
     time TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
-    ai_risk_score DOUBLE PRECISION,
-    ai_metadata JSONB DEFAULT '{}'::jsonb,
     created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 6. Stored RPC Function: Proximity Search with PostGIS
+-- 6. Stored PostGIS RPC Function: Proximity Search (e.g., within 30m or custom radius)
 CREATE OR REPLACE FUNCTION get_nearby_incidents(
     lat DOUBLE PRECISION,
     lng DOUBLE PRECISION,
-    radius_meters DOUBLE PRECISION DEFAULT 5000
+    radius_meters DOUBLE PRECISION DEFAULT 30
 )
 RETURNS TABLE (
     id UUID,
@@ -92,20 +94,19 @@ AS $$
     ORDER BY distance_meters ASC;
 $$;
 
--- 7. Setup Storage Bucket for Photos
+-- 7. Provision Supabase Public Storage Bucket: 'photos'
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('photos', 'photos', true)
 ON CONFLICT (id) DO NOTHING;
 
--- 8. Row Level Security (RLS)
+-- 8. Row Level Security (RLS) Configuration
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.incidents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.reports ENABLE ROW LEVEL SECURITY;
 
 -- Profiles Policies
-CREATE POLICY "Public profiles are viewable by authenticated users"
+CREATE POLICY "Public profiles are viewable by everyone"
 ON public.profiles FOR SELECT
-TO authenticated
 USING (true);
 
 CREATE POLICY "Users can insert their own profile"
@@ -119,31 +120,26 @@ TO authenticated
 USING (auth.uid() = id);
 
 -- Incidents Policies
-CREATE POLICY "Incidents viewable by authenticated users"
+CREATE POLICY "Incidents are viewable by everyone"
 ON public.incidents FOR SELECT
-TO authenticated
 USING (true);
 
-CREATE POLICY "Authenticated users can report incidents"
+CREATE POLICY "Anyone can report an incident"
 ON public.incidents FOR INSERT
-TO authenticated
-WITH CHECK (auth.uid() = user_id);
+WITH CHECK (true);
 
-CREATE POLICY "Users can update their own incidents"
+CREATE POLICY "Users or responders can update incidents"
 ON public.incidents FOR UPDATE
-TO authenticated
-USING (auth.uid() = user_id);
+USING (true);
 
 -- Reports Policies
-CREATE POLICY "Reports viewable by authenticated users"
+CREATE POLICY "Reports are viewable by everyone"
 ON public.reports FOR SELECT
-TO authenticated
 USING (true);
 
-CREATE POLICY "Authenticated users can submit reports"
+CREATE POLICY "Anyone can submit a report"
 ON public.reports FOR INSERT
-TO authenticated
-WITH CHECK (auth.uid() = user_id);
+WITH CHECK (true);
 
 -- Storage bucket policies for 'photos'
 CREATE POLICY "Photos are publicly accessible"
@@ -151,12 +147,12 @@ ON storage.objects FOR SELECT
 TO public
 USING (bucket_id = 'photos');
 
-CREATE POLICY "Authenticated users can upload photos"
+CREATE POLICY "Anyone can upload photos to the photos bucket"
 ON storage.objects FOR INSERT
-TO authenticated
+TO public
 WITH CHECK (bucket_id = 'photos');
 
-CREATE POLICY "Users can update/delete their own photos"
+CREATE POLICY "Users can update/delete their uploaded photos"
 ON storage.objects FOR DELETE
 TO authenticated
 USING (bucket_id = 'photos' AND auth.uid()::text = (storage.foldername(name))[1]);
