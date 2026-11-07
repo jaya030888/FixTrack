@@ -1,14 +1,18 @@
 -- ==============================================================================
--- HerHack Supabase Database Schema & Setup
+-- HerHack Supabase Complete Schema
+-- Civic Issue & Safety Response Platform
+-- (Potholes, Garbage, Harassment, Street Hazards)
 -- ==============================================================================
 
 -- 1. Enable PostGIS Extension
 CREATE EXTENSION IF NOT EXISTS postgis;
 
--- 2. Profiles Table
+-- 2. Profiles Table: (name, role, civic score, auth linkage)
 CREATE TABLE IF NOT EXISTS public.profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-    full_name TEXT,
+    name TEXT NOT NULL,
+    role TEXT DEFAULT 'citizen', -- 'citizen', 'responder', 'admin'
+    civic_score INTEGER DEFAULT 100,
     phone_number TEXT,
     avatar_url TEXT,
     emergency_contacts JSONB DEFAULT '[]'::jsonb,
@@ -16,57 +20,57 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 3. Incidents Table (with PostGIS Point and Spatial Index)
+-- 3. Incidents Table: (type, severity, location, status, confirmed count, incident_time)
 CREATE TABLE IF NOT EXISTS public.incidents (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
-    title TEXT NOT NULL,
-    description TEXT,
-    category TEXT NOT NULL, -- e.g. 'harassment', 'theft', 'unsafe_area', 'sos'
+    type TEXT NOT NULL, -- e.g. 'pothole', 'garbage', 'harassment', 'unsafe_area', 'street_light'
     severity TEXT DEFAULT 'medium', -- 'low', 'medium', 'high', 'critical'
-    location GEOGRAPHY(Point, 4326),
+    location GEOGRAPHY(Point, 4326) NOT NULL,
     latitude DOUBLE PRECISION NOT NULL,
     longitude DOUBLE PRECISION NOT NULL,
     address TEXT,
-    status TEXT DEFAULT 'open', -- 'open', 'investigating', 'resolved'
+    status TEXT DEFAULT 'open', -- 'open', 'investigating', 'in_progress', 'resolved', 'dismissed'
+    confirmed_count INTEGER DEFAULT 1,
+    incident_time TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- Spatial GIST Index for high-performance radius queries
-CREATE INDEX IF NOT EXISTS incidents_location_idx ON public.incidents USING GIST (location);
+-- 4. High-Performance Spatial Index for Location Queries (e.g. "within 30 meters")
+CREATE INDEX IF NOT EXISTS idx_incidents_location ON public.incidents USING GIST (location);
 
--- 4. Reports Table (Supporting Evidence, Witness Statements, & AI Scores)
+-- 5. Reports Table: (incident, user, before photo, after photo, report_time)
 CREATE TABLE IF NOT EXISTS public.reports (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     incident_id UUID REFERENCES public.incidents(id) ON DELETE CASCADE,
-    reporter_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
-    report_type TEXT NOT NULL, -- 'witness', 'evidence', 'ai_analysis', 'official'
+    user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    before_photo TEXT,
+    after_photo TEXT,
     details TEXT,
-    photo_urls TEXT[] DEFAULT ARRAY[]::TEXT[],
-    ai_risk_score DOUBLE PRECISION,
-    ai_metadata JSONB DEFAULT '{}'::jsonb,
+    detected_objects JSONB DEFAULT '[]'::jsonb, -- YOLOv8 bounding boxes & confidence
+    clip_similarity_score DOUBLE PRECISION,     -- CLIP before/after verification score
+    report_time TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 5. Stored RPC Function: Proximity Search with PostGIS
--- Searches incidents within a given distance (in meters) from a lat/lng point
+-- 6. Stored PostGIS RPC Function: Proximity Search (e.g., within 30m or custom radius)
 CREATE OR REPLACE FUNCTION get_nearby_incidents(
     lat DOUBLE PRECISION,
     lng DOUBLE PRECISION,
-    radius_meters DOUBLE PRECISION DEFAULT 5000
+    radius_meters DOUBLE PRECISION DEFAULT 30
 )
 RETURNS TABLE (
     id UUID,
-    title TEXT,
-    description TEXT,
-    category TEXT,
+    type TEXT,
     severity TEXT,
     latitude DOUBLE PRECISION,
     longitude DOUBLE PRECISION,
     address TEXT,
     status TEXT,
+    confirmed_count INTEGER,
     distance_meters DOUBLE PRECISION,
+    incident_time TIMESTAMPTZ,
     created_at TIMESTAMPTZ
 )
 LANGUAGE sql
@@ -75,35 +79,34 @@ SET search_path = public, extensions
 AS $$
     SELECT
         i.id,
-        i.title,
-        i.description,
-        i.category,
+        i.type,
         i.severity,
         i.latitude,
         i.longitude,
         i.address,
         i.status,
+        i.confirmed_count,
         ST_Distance(i.location, ST_SetSRID(ST_MakePoint(lng, lat), 4326)::geography) AS distance_meters,
+        i.incident_time,
         i.created_at
     FROM public.incidents i
     WHERE ST_DWithin(i.location, ST_SetSRID(ST_MakePoint(lng, lat), 4326)::geography, radius_meters)
     ORDER BY distance_meters ASC;
 $$;
 
--- 6. Setup Storage Bucket for Photos
+-- 7. Provision Supabase Public Storage Bucket: 'photos'
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('photos', 'photos', true)
 ON CONFLICT (id) DO NOTHING;
 
--- 7. Row Level Security (RLS)
+-- 8. Row Level Security (RLS) Configuration
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.incidents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.reports ENABLE ROW LEVEL SECURITY;
 
 -- Profiles Policies
-CREATE POLICY "Public profiles are viewable by authenticated users"
+CREATE POLICY "Public profiles are viewable by everyone"
 ON public.profiles FOR SELECT
-TO authenticated
 USING (true);
 
 CREATE POLICY "Users can insert their own profile"
@@ -117,31 +120,26 @@ TO authenticated
 USING (auth.uid() = id);
 
 -- Incidents Policies
-CREATE POLICY "Incidents viewable by authenticated users"
+CREATE POLICY "Incidents are viewable by everyone"
 ON public.incidents FOR SELECT
-TO authenticated
 USING (true);
 
-CREATE POLICY "Authenticated users can report incidents"
+CREATE POLICY "Anyone can report an incident"
 ON public.incidents FOR INSERT
-TO authenticated
-WITH CHECK (auth.uid() = user_id);
+WITH CHECK (true);
 
-CREATE POLICY "Users can update their own incidents"
+CREATE POLICY "Users or responders can update incidents"
 ON public.incidents FOR UPDATE
-TO authenticated
-USING (auth.uid() = user_id);
+USING (true);
 
 -- Reports Policies
-CREATE POLICY "Reports viewable by authenticated users"
+CREATE POLICY "Reports are viewable by everyone"
 ON public.reports FOR SELECT
-TO authenticated
 USING (true);
 
-CREATE POLICY "Authenticated users can submit reports"
+CREATE POLICY "Anyone can submit a report"
 ON public.reports FOR INSERT
-TO authenticated
-WITH CHECK (auth.uid() = reporter_id);
+WITH CHECK (true);
 
 -- Storage bucket policies for 'photos'
 CREATE POLICY "Photos are publicly accessible"
@@ -149,12 +147,12 @@ ON storage.objects FOR SELECT
 TO public
 USING (bucket_id = 'photos');
 
-CREATE POLICY "Authenticated users can upload photos"
+CREATE POLICY "Anyone can upload photos to the photos bucket"
 ON storage.objects FOR INSERT
-TO authenticated
+TO public
 WITH CHECK (bucket_id = 'photos');
 
-CREATE POLICY "Users can update/delete their own photos"
+CREATE POLICY "Users can update/delete their uploaded photos"
 ON storage.objects FOR DELETE
 TO authenticated
 USING (bucket_id = 'photos' AND auth.uid()::text = (storage.foldername(name))[1]);

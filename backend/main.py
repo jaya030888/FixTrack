@@ -1,13 +1,13 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from config import settings
 from database import supabase
-from routers import profiles, incidents, reports
-import uuid
+from routers import profiles, incidents, reports, ai
+import storage
 
 app = FastAPI(
     title="HerHack Backend API",
-    description="Safety platform backend supporting PostGIS incidents, user profiles, and reports",
+    description="FastAPI service for civic safety, PostGIS geospatial queries, Supabase Storage, and YOLOv8 hazard detection",
     version="1.0.0"
 )
 
@@ -19,36 +19,69 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include table routers
+# Modular routers
 app.include_router(profiles.router)
 app.include_router(incidents.router)
 app.include_router(reports.router)
+app.include_router(ai.router)
 
 @app.get("/")
 def health_check():
     return {
         "status": "ok",
-        "service": "backend",
-        "environment": settings.ENVIRONMENT
+        "service": "HerHack Backend",
+        "environment": settings.ENVIRONMENT,
+        "docs_url": "/docs"
     }
 
 @app.post("/api/photos/upload", tags=["Storage"])
 async def upload_photo(file: UploadFile = File(...)):
-    """Uploads an incident or report image to the Supabase photos bucket"""
+    """Uploads before/after photos directly to Supabase photos bucket"""
     try:
-        content = await file.read()
-        file_ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
-        file_path = f"uploads/{uuid.uuid4()}.{file_ext}"
-
-        # Upload to Supabase Storage bucket
-        supabase.storage.from_(settings.SUPABASE_STORAGE_BUCKET_PHOTOS).upload(
-            file_path,
-            content,
-            {"content-type": file.content_type}
-        )
-        
-        # Get public URL
-        public_url = supabase.storage.from_(settings.SUPABASE_STORAGE_BUCKET_PHOTOS).get_public_url(file_path)
-        return {"file_path": file_path, "url": public_url}
+        url = storage.upload_photo(await file.read(), file.filename, file.content_type)
+        return {"url": url}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/report", tags=["Report"])
+async def report(
+    photo: UploadFile = File(...),
+    latitude: float = Form(..., ge=-90, le=90),
+    longitude: float = Form(..., ge=-180, le=180),
+):
+    """Upload a photo and create an incident + report (dummy type/severity for now)."""
+    try:
+        photo_url = storage.upload_photo(await photo.read(), photo.filename, photo.content_type)
+
+        incident = supabase.table("incidents").insert({
+            "type": "pothole",      # dummy for now
+            "severity": "medium",   # dummy for now
+            "latitude": latitude,
+            "longitude": longitude,
+            # PostGIS: longitude FIRST, then latitude
+            "location": f"SRID=4326;POINT({longitude} {latitude})",
+        }).execute().data[0]
+
+        rep = supabase.table("reports").insert({
+            "incident_id": incident["id"],
+            "before_photo": photo_url,
+        }).execute().data[0]
+
+        return {"incident": incident, "report": rep}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/incidents", tags=["Report"])
+def all_incidents():
+    """Return all incidents with lat/lng, confirmed count and the first report photo."""
+    res = supabase.table("incidents").select(
+        "id,type,severity,status,confirmed_count,latitude,longitude,incident_time,reports(before_photo)"
+    ).order("created_at", desc=True).execute()
+    out = []
+    for row in res.data:
+        reports = row.pop("reports", None) or []
+        row["photo"] = next((r["before_photo"] for r in reports if r.get("before_photo")), None)
+        out.append(row)
+    return out
