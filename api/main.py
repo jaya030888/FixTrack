@@ -36,7 +36,10 @@ app.include_router(civic.router)
 
 @app.get("/")
 @app.get("/api")
+@app.get("/api/")
 @app.get("/api/health")
+@app.get("/api/index")
+@app.get("/api/index.py")
 def health_check():
     return {
         "status": "ok",

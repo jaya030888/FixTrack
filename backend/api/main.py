@@ -36,7 +36,10 @@ app.include_router(civic.router)
 
 @app.get("/")
 @app.get("/api")
+@app.get("/api/")
 @app.get("/api/health")
+@app.get("/api/index")
+@app.get("/api/index.py")
 def health_check():
     return {
         "status": "ok",
@@ -53,61 +56,3 @@ async def upload_photo(file: UploadFile = File(...)):
         return {"url": url}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/report", tags=["Report"])
-async def report(
-    photo: UploadFile = File(...),
-    latitude: float = Form(..., ge=-90, le=90),
-    longitude: float = Form(..., ge=-180, le=180),
-):
-    """
-    Step 7 Integration: Upload a photo, run YOLOv8 detection to determine real type and severity,
-    and create the incident + report in Supabase.
-    """
-    try:
-        content = await photo.read()
-        photo_url = storage.upload_photo(content, photo.filename, photo.content_type)
-
-        # Step 7: Real AI inference replaces dummy placeholders
-        from ai_engine import run_hazard_detection
-        ai_result = run_hazard_detection(content)
-        predicted_type = ai_result.get("type", "pothole")
-        calculated_severity = ai_result.get("severity", "medium")
-
-        incident = supabase.table("incidents").insert({
-            "type": predicted_type,
-            "severity": calculated_severity,
-            "latitude": latitude,
-            "longitude": longitude,
-            # PostGIS: longitude FIRST, then latitude
-            "location": f"SRID=4326;POINT({longitude} {latitude})",
-        }).execute().data[0]
-
-        rep = supabase.table("reports").insert({
-            "incident_id": incident["id"],
-            "before_photo": photo_url,
-            "detected_objects": ai_result.get("detected_objects", [])
-        }).execute().data[0]
-
-        return {
-            "incident": incident,
-            "report": rep,
-            "ai_inference": ai_result
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.get("/incidents", tags=["Report"])
-def all_incidents():
-    """Return all incidents with lat/lng, confirmed count and the first report photo."""
-    res = supabase.table("incidents").select(
-        "id,type,severity,status,confirmed_count,latitude,longitude,incident_time,reports(before_photo)"
-    ).order("created_at", desc=True).execute()
-    out = []
-    for row in res.data:
-        reports = row.pop("reports", None) or []
-        row["photo"] = next((r["before_photo"] for r in reports if r.get("before_photo")), None)
-        out.append(row)
-    return out
