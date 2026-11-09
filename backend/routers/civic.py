@@ -104,13 +104,13 @@ def report_or_group_incident(req: ReportIncidentRequest):
             
         target_incident_id = inc_res.data[0]["id"]
 
-        supabase.table("reports").insert({
+        report_data = {
             "incident_id": target_incident_id,
             "user_id": req.user_id,
             "before_photo": req.before_photo,
-            "details": req.details,
-            "ai_metadata": parsed_nlp
-        }).execute()
+            "details": f"{req.details or ''} [Category: {parsed_nlp['detected_category']}, Urgency: {parsed_nlp['suggested_severity']}]".strip()
+        }
+        supabase.table("reports").insert(report_data).execute()
 
     # Award Civic Score
     if req.user_id:
