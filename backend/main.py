@@ -35,6 +35,8 @@ app.include_router(ai.router)
 app.include_router(civic.router)
 
 @app.get("/")
+@app.get("/api")
+@app.get("/api/health")
 def health_check():
     return {
         "status": "ok",
