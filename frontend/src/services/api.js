@@ -276,3 +276,24 @@ export async function uploadEvidencePhoto(file) {
   });
 }
 
+/**
+ * YOLOv8 Object & Road Hazard Detection via Backend
+ */
+export async function detectImageHazards(file) {
+  if (!file) return null;
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${BACKEND_URL}/api/ai/detect`, {
+      method: 'POST',
+      body: formData,
+      signal: AbortSignal.timeout(8000)
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('YOLOv8 hazard detection request failed:', err.message);
+  }
+  return null;
+}

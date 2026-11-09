@@ -7,6 +7,7 @@ import EmergencyContacts from './components/EmergencyContacts';
 import AIAnalyzer from './components/AIAnalyzer';
 import SafeWalk from './components/SafeWalk';
 import DiscreetMode from './components/DiscreetMode';
+import PitchDemo from './components/PitchDemo';
 import { getIncidents, createIncident } from './services/api';
 
 export default function App() {
@@ -135,6 +136,10 @@ export default function App() {
             userLocation={userLocation}
             onNewReportClick={() => setActiveTab('report')}
           />
+        )}
+
+        {activeTab === 'pitch' && (
+          <PitchDemo />
         )}
 
         {activeTab === 'safewalk' && (

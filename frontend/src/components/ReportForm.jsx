@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { createIncident, analyzeThreatText, uploadEvidencePhoto } from '../services/api';
+import { createIncident, analyzeThreatText, uploadEvidencePhoto, detectImageHazards } from '../services/api';
 
 export default function ReportForm({ userLocation, onIncidentCreated, onCancel }) {
   const [title, setTitle] = useState('');
@@ -17,6 +17,10 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
   // Live AI threat scoring state
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  // YOLOv8 vision AI state
+  const [yoloDetection, setYoloDetection] = useState(null);
+  const [isDetectingImage, setIsDetectingImage] = useState(false);
 
   // Update coords if user location changes
   useEffect(() => {
@@ -57,12 +61,29 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
     return () => clearTimeout(timer);
   }, [description, category]);
 
-  const handlePhotoSelect = (e) => {
+  const handlePhotoSelect = async (e) => {
     const file = e.target.files?.[0];
     if (file) {
       setPhotoFile(file);
       const url = URL.createObjectURL(file);
       setPhotoPreview(url);
+      setYoloDetection(null);
+
+      // Trigger YOLOv8 hazard scan
+      setIsDetectingImage(true);
+      try {
+        const detected = await detectImageHazards(file);
+        if (detected && detected.detected) {
+          setYoloDetection(detected);
+          if (detected.severity_assessment === 'high') {
+            setSeverity('high');
+          }
+        }
+      } catch (err) {
+        console.warn('Image detection err:', err);
+      } finally {
+        setIsDetectingImage(false);
+      }
     }
   };
 
@@ -317,13 +338,45 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
                   />
                   <button
                     type="button"
-                    onClick={() => { setPhotoFile(null); setPhotoPreview(null); }}
+                    onClick={() => { setPhotoFile(null); setPhotoPreview(null); setYoloDetection(null); }}
                     style={{ position: 'absolute', top: '-6px', right: '-6px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '50%', width: '18px', height: '18px', fontSize: '10px', cursor: 'pointer' }}>
                     ✕
                   </button>
                 </div>
               )}
             </div>
+
+            {/* YOLOv8 Scanning Indicator & Result */}
+            {isDetectingImage && (
+              <div style={{ fontSize: '0.75rem', color: '#38bdf8', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <span>🔍</span> Scanning image with YOLOv8 civic hazard model...
+              </div>
+            )}
+
+            {yoloDetection && (
+              <div style={{
+                marginTop: '0.6rem',
+                padding: '0.65rem 0.9rem',
+                background: 'rgba(14, 165, 233, 0.12)',
+                border: '1px solid rgba(14, 165, 233, 0.35)',
+                borderRadius: '8px',
+                fontSize: '0.78rem'
+              }}>
+                <div style={{ fontWeight: '700', color: '#38bdf8', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <span>🤖</span> YOLOv8 Vision AI Analysis
+                </div>
+                <div style={{ color: '#cbd5e1' }}>
+                  Detected {yoloDetection.count} hazard object(s) &bull; Severity: <span style={{ textTransform: 'uppercase', fontWeight: 'bold', color: yoloDetection.severity_assessment === 'high' ? '#ef4444' : '#f59e0b' }}>{yoloDetection.severity_assessment}</span>
+                </div>
+                <div style={{ marginTop: '0.35rem', display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  {yoloDetection.detections?.map((d, i) => (
+                    <span key={i} style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 7px', borderRadius: '4px', fontSize: '0.72rem', color: '#fff' }}>
+                      🏷️ {d.label} ({Math.round(d.confidence * 100)}%)
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Anonymous checkbox */}

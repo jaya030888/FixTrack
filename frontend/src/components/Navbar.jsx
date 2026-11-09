@@ -112,6 +112,7 @@ export default function Navbar({ activeTab, setActiveTab, userLocation, triggerS
       }}>
         {[
           { id: 'incidents', label: 'Incident Radar & Map', icon: '🚨' },
+          { id: 'pitch', label: 'Scene 1: Pitch Demo', icon: '🎬' },
           { id: 'safewalk', label: 'SafeWalk Guardian', icon: '🚶‍♀️' },
           { id: 'report', label: 'Report Incident', icon: '📢' },
           { id: 'safety', label: 'Safety Tools & Siren', icon: '🛡️' },
