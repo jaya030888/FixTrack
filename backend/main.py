@@ -27,7 +27,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Modular routers
+# Vercel entrypoint aliases
+handler = app
 app.include_router(profiles.router)
 app.include_router(incidents.router)
 app.include_router(reports.router)
