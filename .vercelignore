@@ -1,5 +1,4 @@
-# Ignore Python backend, AI service, and ML weights on Vercel
-backend/
+# Ignore AI microservice, models, and ML weights on Vercel
 ai-service/
 models/
 supabase/

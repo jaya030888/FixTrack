@@ -1,6 +1,4 @@
 import io
-import cv2
-import numpy as np
 from PIL import Image
 
 def anonymize_privacy_targets(image_bytes: bytes) -> bytes:
@@ -9,6 +7,9 @@ def anonymize_privacy_targets(image_bytes: bytes) -> bytes:
     Judges love privacy-by-design for crowd-sourced civic photos.
     """
     try:
+        import cv2
+        import numpy as np
+
         # Load image into OpenCV format
         nparr = np.frombuffer(image_bytes, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
