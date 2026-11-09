@@ -36,9 +36,10 @@ class IncidentCreate(IncidentBase):
 class IncidentResponse(IncidentBase):
     id: uuid.UUID
     user_id: Optional[uuid.UUID] = None
-    time: datetime
-    created_at: datetime
-    updated_at: datetime
+    time: Optional[datetime] = None
+    incident_time: Optional[datetime] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 # --- Report Schemas ---
 class ReportBase(BaseModel):
@@ -55,5 +56,5 @@ class ReportCreate(ReportBase):
 class ReportResponse(ReportBase):
     id: uuid.UUID
     user_id: Optional[uuid.UUID] = None
-    time: datetime
-    created_at: datetime
+    time: Optional[datetime] = None
+    created_at: Optional[datetime] = None
