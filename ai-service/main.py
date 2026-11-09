@@ -1,23 +1,26 @@
 import os
-from typing import List, Optional
-from fastapi import FastAPI
+import io
+from pathlib import Path
+from typing import List, Dict, Any, Optional
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from dotenv import load_dotenv
+from PIL import Image
 
-load_dotenv()
+# Hugging Face Spaces port requirement: 7860
+PORT = int(os.getenv("PORT", 7860))
 
-PORT = int(os.getenv("PORT", 8001))
-MODEL_NAME = os.getenv("MODEL_NAME", "safety-threat-detector-v2-multilingual")
-THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", 0.70))
+# Absolute path resolution to ensure best.pt is found both locally and inside container
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / "best.pt"
 
 app = FastAPI(
-    title="HerHack / FixTrack AI Threat Assessment Service",
-    description="Intelligent natural language & heuristic safety evaluation microservice",
-    version="2.0.0"
+    title="FixTrack / HerHack Pothole Detection AI Microservice",
+    description="Fine-tuned YOLO AI hazard detector for road infrastructure monitoring. Designed for Hugging Face Spaces.",
+    version="1.0.0"
 )
 
-# Enable CORS for frontend and external integration
+# Enable CORS for external frontend and backend access
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -26,92 +29,138 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class AnalyzeRequest(BaseModel):
-    text: str
-    incident_type: Optional[str] = "general"
+# Lazy model cache
+_yolo_model = None
 
-class AnalyzeResponse(BaseModel):
-    risk_score: float
-    risk_level: str  # 'critical', 'high', 'medium', 'low'
-    model_version: str
-    flagged: bool
-    keywords_detected: List[str]
-    recommended_action: str
-    summary: str
+def get_model():
+    """Load the fine-tuned YOLO model from container or local path."""
+    global _yolo_model
+    if _yolo_model is not None:
+        return _yolo_model
 
-# Critical, High, and Medium danger keywords (English + Hindi/Hinglish)
-CRITICAL_KEYWORDS = [
-    "attack", "stalker", "weapon", "gun", "knife", "assault", "violence", 
-    "kidnap", "grabbed", "force", "screaming", "chhuri", "bandook", "hamla", 
-    "chhedkhani", "bachao", "madad", "pichha"
-]
+    from ultralytics import YOLO
 
-HIGH_KEYWORDS = [
-    "danger", "threat", "urgent", "alone", "scared", "following", "harass", 
-    "dark", "trapped", "cornered", "gunda", "suspicious group", "chasing"
-]
+    resolved_path = None
+    candidate_paths = [
+        MODEL_PATH,
+        Path("/app/best.pt"),
+        BASE_DIR.parent / "models" / "best.pt",
+        Path("best.pt"),
+    ]
 
-MEDIUM_KEYWORDS = [
-    "unlit", "broken light", "isolated", "strange", "loitering", "unmonitored",
-    "catcalling", "unsafe area"
-]
+    for p in candidate_paths:
+        if p.exists() and p.is_file():
+            resolved_path = p
+            break
+
+    if resolved_path:
+        print(f"🎯 Loading trained model from: {resolved_path}")
+        _yolo_model = YOLO(str(resolved_path))
+        print(f"✅ Model loaded! Task: {getattr(_yolo_model, 'task', 'unknown')}, Classes: {_yolo_model.names}")
+    else:
+        print("⚠️ best.pt not found at candidate paths. Falling back to yolov8n.pt")
+        _yolo_model = YOLO("yolov8n.pt")
+
+    return _yolo_model
+
 
 @app.get("/")
-def health_check():
+def root():
     return {
-        "status": "ok",
-        "service": "ai-service",
-        "model": MODEL_NAME,
-        "threshold": THRESHOLD
+        "status": "online",
+        "service": "Pothole Detection AI",
+        "port": PORT,
+        "model_file_present": MODEL_PATH.exists(),
+        "model_path": str(MODEL_PATH),
+        "docs_url": "/docs"
     }
 
-@app.post("/analyze", response_model=AnalyzeResponse)
-def analyze_incident(req: AnalyzeRequest):
-    text_lower = req.text.lower()
-    
-    detected_critical = [k for k in CRITICAL_KEYWORDS if k in text_lower]
-    detected_high = [k for k in HIGH_KEYWORDS if k in text_lower]
-    detected_medium = [k for k in MEDIUM_KEYWORDS if k in text_lower]
 
-    all_detected = detected_critical + detected_high + detected_medium
+@app.get("/health")
+def health():
+    return {"status": "healthy", "service": "ai-service"}
 
-    # Risk scoring algorithm
-    score = 0.20
-    if detected_critical:
-        score = min(0.98, 0.75 + len(detected_critical) * 0.08)
-    elif detected_high:
-        score = min(0.85, 0.55 + len(detected_high) * 0.07)
-    elif detected_medium:
-        score = min(0.65, 0.35 + len(detected_medium) * 0.06)
 
-    # Risk classification
-    if score >= 0.75:
-        risk_level = "critical"
-        recommended_action = "EMERGENCY_DISPATCH: Alert police control room (112) and broadcast instant SOS beacon"
-    elif score >= 0.55:
-        risk_level = "high"
-        recommended_action = "PATROL_ALERT: Dispatch nearby community patrols and notify users within 2km geofence"
-    elif score >= 0.35:
-        risk_level = "medium"
-        recommended_action = "COMMUNITY_CAUTION: Mark area as caution zone and log infrastructure ticket (lighting/cctv)"
-    else:
-        risk_level = "low"
-        recommended_action = "ROUTINE_LOG: Log incident in safety database for ongoing monitoring"
+@app.post("/detect")
+async def detect_hazard(file: UploadFile = File(...)):
+    """
+    Primary Detection Endpoint:
+    Accepts an uploaded road/pothole image.
+    Returns detected objects, bounding boxes, confidence score, and calculated severity.
+    """
+    try:
+        content = await file.read()
+        image = Image.open(io.BytesIO(content)).convert("RGB")
+        width, height = image.size
 
-    flagged = score >= THRESHOLD
+        model = get_model()
+        results = model(image, verbose=False)
 
-    summary = (
-        f"Critical threat detected ({len(all_detected)} alert markers). Immediate emergency response advised."
-        if flagged else
-        f"Standard safety evaluation completed for incident category '{req.incident_type}'."
-    )
+        detections = []
+        max_box_area_ratio = 0.0
+        detected_type = "pothole"
+        top_confidence = 0.0
 
-    return AnalyzeResponse(
-        risk_score=round(score, 2),
-        risk_level=risk_level,
-        model_version=MODEL_NAME,
-        flagged=flagged,
-        keywords_detected=all_detected,
-        recommended_action=recommended_action,
-        summary=summary
-    )
+        for r in results:
+            if hasattr(r, "boxes") and r.boxes is not None:
+                for box in r.boxes:
+                    cls_id = int(box.cls[0])
+                    label = model.names.get(cls_id, "pothole").lower()
+                    conf = float(box.conf[0])
+                    xyxy = box.xyxy[0].tolist()
+
+                    # Class normalization
+                    if any(k in label for k in ["pothole", "hole", "crack", "road"]):
+                        mapped_type = "pothole"
+                    else:
+                        mapped_type = label
+
+                    if conf > top_confidence:
+                        top_confidence = conf
+                        detected_type = mapped_type
+
+                    # Compute physical size heuristic
+                    box_w = max(0, xyxy[2] - xyxy[0])
+                    box_h = max(0, xyxy[3] - xyxy[1])
+                    area_ratio = (box_w * box_h) / (width * height)
+                    if area_ratio > max_box_area_ratio:
+                        max_box_area_ratio = area_ratio
+
+                    detections.append({
+                        "label": mapped_type,
+                        "confidence": round(conf, 3),
+                        "box": [round(c, 2) for c in xyxy],
+                        "area_ratio": round(area_ratio, 3)
+                    })
+
+        # Calculate severity heuristic based on physical area and detection count
+        if len(detections) == 0:
+            severity = "low"
+            top_confidence = 0.0
+            detected_type = "pothole"
+        elif max_box_area_ratio > 0.20 or len(detections) >= 4 or top_confidence > 0.90:
+            severity = "critical" if max_box_area_ratio > 0.35 else "high"
+        elif max_box_area_ratio > 0.08 or len(detections) >= 2:
+            severity = "medium"
+        else:
+            severity = "low"
+
+        return {
+            "detected": len(detections) > 0,
+            "count": len(detections),
+            "type": detected_type,
+            "severity": severity,
+            "confidence": round(top_confidence, 3),
+            "detections": detections,
+            "image_dimensions": {"width": width, "height": height},
+            "model_source": "best.pt" if MODEL_PATH.exists() else "fallback"
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+if __name__ == "__main__":
+    import uvicorn
+    print(f"🚀 Starting AI Detector microservice on port {PORT}...")
+    uvicorn.run("main:app", host="0.0.0.0", port=PORT, reload=False)

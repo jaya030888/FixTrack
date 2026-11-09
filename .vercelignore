@@ -1,0 +1,8 @@
+# Ignore AI microservice, models, and ML weights on Vercel
+ai-service/
+models/
+supabase/
+*.pt
+*.pth
+*.zip
+

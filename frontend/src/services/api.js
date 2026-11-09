@@ -6,8 +6,12 @@
 
 import { supabase, photoBucketName } from './supabase';
 
-const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-const AI_SERVICE_URL = import.meta.env.VITE_AI_SERVICE_URL || 'http://localhost:8001';
+const BACKEND_URL = (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_BACKEND_URL !== undefined && process.env?.NEXT_PUBLIC_BACKEND_URL !== '')
+  ? process.env.NEXT_PUBLIC_BACKEND_URL
+  : (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_API_URL)
+    ? process.env.NEXT_PUBLIC_API_URL
+    : (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? '' : 'http://localhost:8000');
+const AI_SERVICE_URL = (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_AI_SERVICE_URL) || 'http://localhost:8001';
 
 // Seed demo incidents for initial experience centered around common coordinates or user GPS
 const DEFAULT_INCIDENTS = [

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createIncident, analyzeThreatText, uploadEvidencePhoto, detectImageHazards } from '../services/api';
+import { compressImage } from '../services/imageCompressor';
+import { getFriendlyErrorMessage } from '../services/errorHandler';
 
 export default function ReportForm({ userLocation, onIncidentCreated, onCancel }) {
   const [title, setTitle] = useState('');
@@ -64,8 +66,15 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
   const handlePhotoSelect = async (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      setPhotoFile(file);
-      const url = URL.createObjectURL(file);
+      let uploadFile = file;
+      try {
+        uploadFile = await compressImage(file);
+      } catch (err) {
+        uploadFile = file;
+      }
+
+      setPhotoFile(uploadFile);
+      const url = URL.createObjectURL(uploadFile);
       setPhotoPreview(url);
       setYoloDetection(null);
 
@@ -89,7 +98,7 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
 
   const handleFetchCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert('Geolocation not supported by this browser');
+      alert('Location is not supported on this browser. You can enter the landmark manually.');
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -99,7 +108,8 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
         setAddress(`Verified GPS (${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)})`);
       },
       (err) => {
-        alert('Could not acquire GPS: ' + err.message);
+        const friendly = getFriendlyErrorMessage(err);
+        alert(`${friendly.title}\n${friendly.message}`);
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
@@ -412,4 +422,3 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
     </div>
   );
 }
-

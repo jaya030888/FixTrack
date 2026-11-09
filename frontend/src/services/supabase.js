@@ -1,10 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-export const photoBucketName = import.meta.env.VITE_STORAGE_BUCKET_PHOTOS || 'photos';
+// Environment variable retrieval compatible with Next.js webpack & browser bundle
+const supabaseUrl = 
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 
+  process.env.VITE_SUPABASE_URL || 
+  'https://hzalojkkghsxwbdflkyk.supabase.co';
 
-export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
+const supabaseAnonKey = 
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 
+  process.env.VITE_SUPABASE_ANON_KEY || 
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6YWxvamtrZ2hzeHdiZGZsa3lrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQwNDMzNDYsImV4cCI6MjEwOTYxOTM0Nn0.7JR-wGzKXEZHxPE_U452hqDTNtGTtSizS52DB16m4cI';
+
+export const photoBucketName = 
+  process.env.NEXT_PUBLIC_STORAGE_BUCKET_PHOTOS || 
+  process.env.VITE_STORAGE_BUCKET_PHOTOS || 
+  'photos';
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 /**
  * Upload an image file to Supabase Storage photos bucket

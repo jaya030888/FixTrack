@@ -1,14 +1,22 @@
-import Link from "next/link";
+"use client";
+
+import dynamic from "next/dynamic";
+
+const FixTrackApp = dynamic(() => import("../src/App"), {
+  ssr: false,
+  loading: () => (
+    <div style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "100vh",
+      fontFamily: "system-ui, sans-serif"
+    }}>
+      <p>Loading FixTrack Platform...</p>
+    </div>
+  ),
+});
 
 export default function Home() {
-  return (
-    <main className="wrap">
-      <h1>HerHack</h1>
-      <p>Report civic hazards and see them on the map.</p>
-      <nav className="row">
-        <Link className="btn" href="/report">Report an issue</Link>
-        <Link className="btn secondary" href="/map">View map</Link>
-      </nav>
-    </main>
-  );
+  return <FixTrackApp />;
 }
