@@ -7,6 +7,8 @@ import EmergencyContacts from './components/EmergencyContacts';
 import AIAnalyzer from './components/AIAnalyzer';
 import SafeWalk from './components/SafeWalk';
 import DiscreetMode from './components/DiscreetMode';
+import ShowcaseSuite from './components/ShowcaseSuite';
+import PitchDemo from './components/PitchDemo';
 import AdvancedFeaturesShowcase from './components/AdvancedFeaturesShowcase';
 import AuthBar, { DEMO_ACCOUNTS } from './components/AuthBar';
 import { getIncidents, createIncident } from './services/api';
@@ -150,6 +152,17 @@ export default function App() {
           />
         )}
 
+        {activeTab === 'showcase' && (
+          <>
+            <ShowcaseSuite />
+            <AdvancedFeaturesShowcase userLocation={userLocation} />
+          </>
+        )}
+
+        {activeTab === 'pitch' && (
+          <PitchDemo />
+        )}
+
         {activeTab === 'safewalk' && (
           <SafeWalk
             userLocation={userLocation}
@@ -162,12 +175,6 @@ export default function App() {
             userLocation={userLocation}
             onIncidentCreated={handleIncidentCreated}
             onCancel={() => setActiveTab('incidents')}
-          />
-        )}
-
-        {activeTab === 'showcase' && (
-          <AdvancedFeaturesShowcase
-            userLocation={userLocation}
           />
         )}
 
@@ -259,7 +266,7 @@ export default function App() {
         color: 'var(--text-dim)',
         background: 'rgba(11, 15, 25, 0.8)'
       }}>
-        <div>FixTrack (HerHack) &bull; Branch: <strong style={{ color: '#a5b4fc' }}>Chandani</strong> &bull; AI Safety & PostGIS Response Platform</div>
+        <div>FixTrack (HerHack) &bull; AI Safety & Civic Incident Response Platform</div>
       </footer>
 
     </div>
