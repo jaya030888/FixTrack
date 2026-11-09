@@ -250,7 +250,7 @@ export default function App() {
         color: 'var(--text-dim)',
         background: 'rgba(11, 15, 25, 0.8)'
       }}>
-        <div>FixTrack (HerHack) &bull; Branch: <strong style={{ color: '#a5b4fc' }}>Chandani</strong> &bull; AI Safety & PostGIS Response Platform</div>
+        <div>FixTrack (HerHack) &bull; AI Safety & Civic Incident Response Platform</div>
       </footer>
 
     </div>

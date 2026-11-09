@@ -64,18 +64,6 @@ export default function Navbar({ activeTab, setActiveTab, userLocation, triggerS
             </button>
           </div>
 
-          {/* Branch Tag */}
-          <div style={{
-            background: 'rgba(99, 102, 241, 0.15)',
-            border: '1px solid rgba(99, 102, 241, 0.3)',
-            color: '#a5b4fc',
-            padding: '0.35rem 0.65rem',
-            borderRadius: '6px',
-            fontWeight: '600',
-            fontSize: '0.72rem'
-          }}>
-            🌿 Chandani
-          </div>
 
           {/* Disguise Mode Switcher */}
           <button
