@@ -47,3 +47,4 @@ def anonymize_privacy_targets(image_bytes: bytes) -> bytes:
     except Exception as e:
         print(f"Privacy blur warning: {e}")
         return image_bytes
+

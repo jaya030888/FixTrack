@@ -69,3 +69,4 @@ export async function compressImage(file, maxWidth = 1280, maxHeight = 1280, qua
     reader.onerror = (err) => reject(err);
   });
 }
+

@@ -167,3 +167,4 @@ def verify_before_after_photos(before_bytes: bytes, after_bytes: bytes) -> Dict[
         "hazard_detected_in_after": still_has_hazard,
         "after_detection_details": after_hazard_eval
     }
+

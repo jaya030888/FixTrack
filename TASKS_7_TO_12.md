@@ -78,3 +78,4 @@ This document outlines the detailed execution plan and configurations for **Task
 - **Demo Accounts Pre-configured**:
   - `citizen@fix-track.org` (Civic score: 140)
   - `authority@bbmp.gov.in` (Municipal resolver role)
+

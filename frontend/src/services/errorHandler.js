@@ -56,3 +56,4 @@ export function getFriendlyErrorMessage(error, context = '') {
     type: 'error'
   };
 }
+
