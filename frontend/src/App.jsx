@@ -7,7 +7,7 @@ import EmergencyContacts from './components/EmergencyContacts';
 import AIAnalyzer from './components/AIAnalyzer';
 import SafeWalk from './components/SafeWalk';
 import DiscreetMode from './components/DiscreetMode';
-import PitchDemo from './components/PitchDemo';
+import ShowcaseSuite from './components/ShowcaseSuite';
 import { getIncidents, createIncident } from './services/api';
 
 export default function App() {
@@ -138,8 +138,8 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'pitch' && (
-          <PitchDemo />
+        {activeTab === 'showcase' && (
+          <ShowcaseSuite />
         )}
 
         {activeTab === 'safewalk' && (
