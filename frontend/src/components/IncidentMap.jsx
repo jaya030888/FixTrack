@@ -12,14 +12,15 @@ export default function IncidentMap({ incidents, userLocation, onSelectIncident,
   const filteredIncidents = useMemo(() => {
     return incidents.filter(inc => {
       // Category filter
-      if (selectedCategory !== 'all' && inc.category !== selectedCategory) return false;
+      const incCat = inc.category || inc.type;
+      if (selectedCategory !== 'all' && incCat !== selectedCategory) return false;
       // Severity filter
       if (selectedSeverity !== 'all' && inc.severity !== selectedSeverity) return false;
       // Search query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
-        const matchesTitle = inc.title?.toLowerCase().includes(q);
-        const matchesDesc = inc.description?.toLowerCase().includes(q);
+        const matchesTitle = (inc.title || inc.type)?.toLowerCase().includes(q);
+        const matchesDesc = (inc.description || inc.details)?.toLowerCase().includes(q);
         const matchesAddr = inc.address?.toLowerCase().includes(q);
         if (!matchesTitle && !matchesDesc && !matchesAddr) return false;
       }
@@ -44,13 +45,18 @@ export default function IncidentMap({ incidents, userLocation, onSelectIncident,
   };
 
   const getCategoryIcon = (cat) => {
-    switch (cat) {
+    switch (cat?.toLowerCase()) {
       case 'harassment': return '⚠️';
       case 'stalking': return '👁️';
       case 'unsafe_area': return '💡';
       case 'safe_zone': return '🛡️';
       case 'theft': return '🚨';
       case 'sos': return '🆘';
+      case 'pothole': return '🕳️';
+      case 'garbage': return '🗑️';
+      case 'street_light': return '💡';
+      case 'open_drain':
+      case 'drains': return '🌊';
       default: return '📍';
     }
   };
@@ -199,7 +205,7 @@ export default function IncidentMap({ incidents, userLocation, onSelectIncident,
                     )}
                     <circle cx={cx} cy={cy} r={isSelected ? 8 : 6} fill={pinColor} />
                     <text x={cx + 8} y={cy + 3} fill="#fff" fontSize="9" fontWeight="bold">
-                      {inc.category === 'sos' ? 'SOS' : inc.title.substring(0, 10)}...
+                      {inc.category === 'sos' ? 'SOS' : ((inc.title || inc.type || inc.category || 'Incident').substring(0, 10))}...
                     </text>
                   </g>
                 );
@@ -222,10 +228,10 @@ export default function IncidentMap({ incidents, userLocation, onSelectIncident,
                     {activeIncident.severity}
                   </span>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    {getCategoryIcon(activeIncident.category)} {activeIncident.category}
+                    {getCategoryIcon(activeIncident.category || activeIncident.type)} {activeIncident.category || activeIncident.type}
                   </span>
                   <h3 style={{ fontSize: '1rem', fontWeight: '700', marginTop: '0.35rem', color: '#fff' }}>
-                    {activeIncident.title}
+                    {activeIncident.title || (activeIncident.type ? activeIncident.type.toUpperCase() : 'Incident Details')}
                   </h3>
                 </div>
                 
@@ -240,7 +246,7 @@ export default function IncidentMap({ incidents, userLocation, onSelectIncident,
               </div>
 
               <p style={{ fontSize: '0.85rem', color: '#cbd5e1', marginBottom: '0.75rem' }}>
-                {activeIncident.description}
+                {activeIncident.description || activeIncident.details || 'Community reported civic hazard.'}
               </p>
 
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
@@ -304,16 +310,16 @@ export default function IncidentMap({ incidents, userLocation, onSelectIncident,
                     </div>
 
                     <h4 style={{ fontSize: '0.92rem', fontWeight: '700', color: '#fff', marginBottom: '0.25rem' }}>
-                      {getCategoryIcon(inc.category)} {inc.title}
+                      {getCategoryIcon(inc.category || inc.type)} {inc.title || (inc.type ? inc.type.toUpperCase() : 'Reported Incident')}
                     </h4>
 
                     <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: '1.4', marginBottom: '0.5rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                      {inc.description}
+                      {inc.description || inc.details || 'Community reported hazard.'}
                     </p>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.72rem' }}>
                       <span style={{ color: 'var(--text-dim)' }}>
-                        {inc.address ? inc.address.substring(0, 28) + '...' : 'Coordinates reported'}
+                        {inc.address ? (inc.address.length > 28 ? inc.address.substring(0, 28) + '...' : inc.address) : 'Coordinates reported'}
                       </span>
                       {inc.distance_meters && (
                         <span style={{ color: '#38bdf8', fontWeight: '700' }}>
