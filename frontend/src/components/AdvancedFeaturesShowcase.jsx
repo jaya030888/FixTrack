@@ -38,9 +38,11 @@ export default function AdvancedFeaturesShowcase({ userLocation }) {
     setYoloPreview(URL.createObjectURL(file));
 
     try {
+      const apiUrl = (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_BACKEND_URL) 
+        || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' ? '' : 'http://localhost:8000');
       const formData = new FormData();
       formData.append('file', file);
-      const res = await fetch('http://localhost:8000/api/ai/detect', {
+      const res = await fetch(`${apiUrl}/api/ai/detect`, {
         method: 'POST',
         body: formData
       });
