@@ -6,17 +6,27 @@ from typing import Optional, Dict, Any, Tuple
 from PIL import Image
 import numpy as np
 
-# Path configurations for weights
-MODEL_DIR = Path(__file__).resolve().parent.parent / "models"
-MODEL_DIR.mkdir(exist_ok=True)
+import tempfile
+
+# Path configurations for weights (gracefully handle read-only serverless filesystems on Vercel)
+try:
+    if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+        MODEL_DIR = Path(tempfile.gettempdir()) / "models"
+    else:
+        MODEL_DIR = Path(__file__).resolve().parent.parent / "models"
+    MODEL_DIR.mkdir(parents=True, exist_ok=True)
+except Exception:
+    MODEL_DIR = Path(tempfile.gettempdir())
+
 DEFAULT_WEIGHTS_PATH = MODEL_DIR / "best.pt"
 
 # Candidate paths where user or environment might have best.pt
 CANDIDATE_WEIGHTS = [
     DEFAULT_WEIGHTS_PATH,
+    Path(__file__).resolve().parent / "best.pt",
+    Path("models/best.pt"),
     Path("D:/best.pt"),
-    Path("D:/best.pt.zip"),
-    Path(__file__).resolve().parent / "best.pt"
+    Path("D:/best.pt.zip")
 ]
 
 # Cache loaded models
@@ -42,9 +52,12 @@ def get_yolo_model():
                 # If candidate ends with .zip, copy/rename it to models/best.pt
                 if candidate.suffix.lower() == ".zip":
                     target_file = MODEL_DIR / "best.pt"
-                    if not target_file.exists():
-                        shutil.copy2(candidate, target_file)
-                    resolved_path = target_file
+                    try:
+                        if not target_file.exists():
+                            shutil.copy2(candidate, target_file)
+                        resolved_path = target_file
+                    except Exception:
+                        resolved_path = candidate
                     break
                 else:
                     resolved_path = candidate
