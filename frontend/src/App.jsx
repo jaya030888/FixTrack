@@ -153,10 +153,11 @@ export default function App() {
         )}
 
         {activeTab === 'showcase' && (
-          <>
-            <ShowcaseSuite />
-            <AdvancedFeaturesShowcase userLocation={userLocation} />
-          </>
+          <ShowcaseSuite />
+        )}
+
+        {activeTab === 'ai-suite' && (
+          <AdvancedFeaturesShowcase userLocation={userLocation} />
         )}
 
         {activeTab === 'pitch' && (
