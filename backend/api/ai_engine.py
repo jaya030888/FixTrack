@@ -17,16 +17,14 @@ try:
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
 except Exception:
     MODEL_DIR = Path(tempfile.gettempdir())
-
 DEFAULT_WEIGHTS_PATH = MODEL_DIR / "best.pt"
 
 # Candidate paths where user or environment might have best.pt
 CANDIDATE_WEIGHTS = [
     DEFAULT_WEIGHTS_PATH,
-    Path(__file__).resolve().parent / "best.pt",
-    Path("models/best.pt"),
     Path("D:/best.pt"),
-    Path("D:/best.pt.zip")
+    Path("D:/best.pt.zip"),
+    Path(__file__).resolve().parent / "best.pt"
 ]
 
 # Cache loaded models
@@ -52,12 +50,9 @@ def get_yolo_model():
                 # If candidate ends with .zip, copy/rename it to models/best.pt
                 if candidate.suffix.lower() == ".zip":
                     target_file = MODEL_DIR / "best.pt"
-                    try:
-                        if not target_file.exists():
-                            shutil.copy2(candidate, target_file)
-                        resolved_path = target_file
-                    except Exception:
-                        resolved_path = candidate
+                    if not target_file.exists():
+                        shutil.copy2(candidate, target_file)
+                    resolved_path = target_file
                     break
                 else:
                     resolved_path = candidate
