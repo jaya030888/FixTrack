@@ -1,0 +1,8 @@
+# Ignore Python backend, AI service, and ML weights on Vercel
+backend/
+ai-service/
+models/
+supabase/
+*.pt
+*.pth
+*.zip
