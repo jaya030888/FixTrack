@@ -4,7 +4,12 @@ import { compressImage } from '../services/imageCompressor';
 
 export default function AdvancedFeaturesShowcase({ userLocation }) {
   // Tab within showcase
-  const [activeFeature, setActiveFeature] = useState('clip');
+  const [activeFeature, setActiveFeature] = useState('yolo');
+
+  // 0. Live YOLO best.pt State
+  const [yoloPreview, setYoloPreview] = useState(null);
+  const [yoloResult, setYoloResult] = useState(null);
+  const [isYoloRunning, setIsYoloRunning] = useState(false);
 
   // 1. CLIP Simulation State
   const [similarityScore, setSimilarityScore] = useState(null);
@@ -24,6 +29,29 @@ export default function AdvancedFeaturesShowcase({ userLocation }) {
   // 4. Community Audit State
   const [auditVotes, setAuditVotes] = useState({ fixed: 8, stillBroken: 14 });
   const [voted, setVoted] = useState(false);
+
+  // Run YOLO Inference on custom best.pt
+  const handleRunYoloInference = async (file) => {
+    if (!file) return;
+    setIsYoloRunning(true);
+    setYoloResult(null);
+    setYoloPreview(URL.createObjectURL(file));
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('http://localhost:8000/api/ai/detect', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      setYoloResult(data);
+    } catch (err) {
+      setYoloResult({ error: err.message });
+    } finally {
+      setIsYoloRunning(false);
+    }
+  };
 
   // Run CLIP Demonstration
   const handleRunClipCheck = (scenario) => {
@@ -109,6 +137,7 @@ export default function AdvancedFeaturesShowcase({ userLocation }) {
       {/* Feature Navigation Pills */}
       <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', marginBottom: '1.5rem', paddingBottom: '0.5rem' }}>
         {[
+          { id: 'yolo', label: '🎯 YOLO best.pt Model', desc: 'Real Pothole Segmentation AI' },
           { id: 'clip', label: '🖼️ CLIP Before/After Check', desc: 'Catches fake repair photos' },
           { id: 'privacy', label: '🔒 Face & Number Plate Blur', desc: 'Privacy-by-design' },
           { id: 'time', label: '🌙 Time-Based Safety Score', desc: 'Day vs Night Women Mode' },
@@ -134,6 +163,103 @@ export default function AdvancedFeaturesShowcase({ userLocation }) {
           </button>
         ))}
       </div>
+
+      {/* 0. Live YOLO best.pt Model Demonstration */}
+      {activeFeature === 'yolo' && (
+        <div style={styles.card}>
+          <div style={styles.cardHeader}>
+            <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span>🎯</span> Custom Trained Model: <code>best.pt</code>
+            </h3>
+            <span style={{ ...styles.badge, backgroundColor: '#dcfce7', color: '#15803d' }}>
+              Connected to D:\best.pt
+            </span>
+          </div>
+          <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
+            Ultralytics YOLO segmentation model fine-tuned on road hazards. Detects real potholes, assigns bounding polygons, confidence scores, and determines physical hazard severity.
+          </p>
+
+          <div style={{ marginTop: '1.25rem', padding: '1rem', border: '1px dashed #cbd5e1', borderRadius: '10px', textAlign: 'center', backgroundColor: '#f8fafc' }}>
+            <label style={{ cursor: 'pointer', display: 'inline-block' }}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) handleRunYoloInference(f);
+                }}
+                style={{ display: 'none' }}
+              />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                <Upload size={32} color="#6366f1" />
+                <span style={{ fontWeight: '600', color: '#4338ca', fontSize: '0.9rem' }}>
+                  Click to Upload Road/Pothole Photo for Live AI Inference
+                </span>
+                <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>
+                  Directly executes against <code>POST /api/ai/detect</code> with <code>best.pt</code>
+                </span>
+              </div>
+            </label>
+          </div>
+
+          {isYoloRunning && (
+            <div style={{ textAlign: 'center', padding: '1.5rem', color: '#6366f1' }}>
+              <RefreshCw className="animate-spin" size={28} style={{ margin: '0 auto 0.5rem auto' }} />
+              <p style={{ margin: 0, fontWeight: '600' }}>Running inference through best.pt weights...</p>
+            </div>
+          )}
+
+          {yoloResult && !isYoloRunning && (
+            <div style={{ marginTop: '1.5rem', padding: '1.25rem', borderRadius: '10px', backgroundColor: '#f1f5f9', border: '1px solid #cbd5e1' }}>
+              <h4 style={{ margin: '0 0 0.75rem 0', fontSize: '0.95rem', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <CheckCircle size={18} color="#16a34a" /> Live Model Inference Output
+              </h4>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem', marginBottom: '1rem' }}>
+                <div style={{ background: '#fff', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <small style={{ color: '#64748b' }}>Detected Class</small>
+                  <p style={{ margin: '0.2rem 0 0 0', fontWeight: '700', fontSize: '1.1rem', color: '#1e293b' }}>
+                    {yoloResult.type || 'Pothole'}
+                  </p>
+                </div>
+                <div style={{ background: '#fff', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <small style={{ color: '#64748b' }}>Computed Severity</small>
+                  <p style={{
+                    margin: '0.2rem 0 0 0',
+                    fontWeight: '700',
+                    fontSize: '1.1rem',
+                    color: yoloResult.severity_assessment === 'critical' ? '#dc2626' : yoloResult.severity_assessment === 'high' ? '#ea580c' : '#16a34a'
+                  }}>
+                    {String(yoloResult.severity_assessment || 'low').toUpperCase()}
+                  </p>
+                </div>
+                <div style={{ background: '#fff', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <small style={{ color: '#64748b' }}>Confidence Score</small>
+                  <p style={{ margin: '0.2rem 0 0 0', fontWeight: '700', fontSize: '1.1rem', color: '#2563eb' }}>
+                    {yoloResult.confidence ? `${Math.round(yoloResult.confidence * 100)}%` : 'No Hazard (0%)'}
+                  </p>
+                </div>
+                <div style={{ background: '#fff', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <small style={{ color: '#64748b' }}>Model Weights Source</small>
+                  <p style={{ margin: '0.2rem 0 0 0', fontWeight: '700', fontSize: '0.9rem', color: '#7c3aed' }}>
+                    {yoloResult.model_source || 'custom_best_pt'}
+                  </p>
+                </div>
+              </div>
+
+              {yoloPreview && (
+                <div style={{ marginTop: '0.75rem', textAlign: 'center' }}>
+                  <img
+                    src={yoloPreview}
+                    alt="Analyzed preview"
+                    style={{ maxHeight: '240px', borderRadius: '8px', border: '1px solid #cbd5e1', objectFit: 'contain' }}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 1. CLIP Demonstration */}
       {activeFeature === 'clip' && (

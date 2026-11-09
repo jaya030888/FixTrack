@@ -18,6 +18,12 @@ node_modules/
 dist/
 build/
 
+# Machine Learning Weights
+models/*.pt
+*.pt
+*.pth
+*.onnx
+
 # Python Cache and Build Artifacts
 __pycache__/
 *.py[cod]

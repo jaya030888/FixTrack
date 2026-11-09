@@ -184,6 +184,19 @@ This audit document tracks each verification checkpoint against the live running
 
 ---
 
+## 12. Fine-Tuned AI Hazard Model (best.pt)
+- [x] **Weights file loaded from `D:\best.pt` / `models/best.pt`**
+  - **Status:** ✅ **PASS**
+  - **Evidence:** Ultralytics YOLO segmentation model (`task: segment`, class: `Pothole`) loaded directly into FastAPI inference engine.
+- [x] **Inference replaces dummy type and severity placeholders**
+  - **Status:** ✅ **PASS**
+  - **Evidence:** `POST /api/ai/detect` and `POST /report` run live tensor inference on incoming images, returning accurate bounding boxes, confidence scores, and dynamic physical severity ratings (`low`, `medium`, `high`, `critical`).
+- [x] **Interactive Test Console integrated in Frontend**
+  - **Status:** ✅ **PASS**
+  - **Evidence:** Added live test panel in `AdvancedFeaturesShowcase.jsx` allowing users and hackathon judges to upload images and observe real-time predictions directly from `best.pt`.
+
+---
+
 ## Summary & Verification Matrix
 
 | Category | Total Checks | Passed | Broken / Failed | Status |
@@ -199,4 +212,6 @@ This audit document tracks each verification checkpoint against the live running
 | 9. Safe Route & Women Mode | 4 | 4 | 0 | ✅ 100% |
 | 10. Realistic Seed Data | 3 | 3 | 0 | ✅ 100% |
 | 11. Mobile / Phone UX | 3 | 3 | 0 | ✅ 100% |
-| **Overall Total** | **38** | **38** | **0** | **✅ READY FOR DEMO** |
+| 12. Fine-Tuned AI Model (best.pt) | 3 | 3 | 0 | ✅ 100% |
+| **Overall Total** | **41** | **41** | **0** | **✅ READY FOR DEMO** |
+

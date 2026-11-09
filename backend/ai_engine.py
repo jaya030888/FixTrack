@@ -11,12 +11,20 @@ MODEL_DIR = Path(__file__).resolve().parent.parent / "models"
 MODEL_DIR.mkdir(exist_ok=True)
 DEFAULT_WEIGHTS_PATH = MODEL_DIR / "best.pt"
 
+# Candidate paths where user or environment might have best.pt
+CANDIDATE_WEIGHTS = [
+    DEFAULT_WEIGHTS_PATH,
+    Path("D:/best.pt"),
+    Path("D:/best.pt.zip"),
+    Path(__file__).resolve().parent / "best.pt"
+]
+
 # Cache loaded models
 _yolo_model = None
 
 def get_yolo_model():
     """
-    Load fine-tuned custom YOLOv8 model (best.pt) if present in models/,
+    Load fine-tuned custom YOLO model (best.pt) from models/ or D:/,
     otherwise gracefully fall back to base yolov8n.pt or heuristic simulation.
     """
     global _yolo_model
@@ -25,11 +33,29 @@ def get_yolo_model():
 
     try:
         from ultralytics import YOLO
-        if DEFAULT_WEIGHTS_PATH.exists():
-            print(f"🎯 Loading custom fine-tuned model: {DEFAULT_WEIGHTS_PATH}")
-            _yolo_model = YOLO(str(DEFAULT_WEIGHTS_PATH))
+        import shutil
+
+        # Locate the weights file
+        resolved_path = None
+        for candidate in CANDIDATE_WEIGHTS:
+            if candidate.is_file():
+                # If candidate ends with .zip, copy/rename it to models/best.pt
+                if candidate.suffix.lower() == ".zip":
+                    target_file = MODEL_DIR / "best.pt"
+                    if not target_file.exists():
+                        shutil.copy2(candidate, target_file)
+                    resolved_path = target_file
+                    break
+                else:
+                    resolved_path = candidate
+                    break
+
+        if resolved_path and resolved_path.exists():
+            print(f"🎯 Loading custom fine-tuned model: {resolved_path}")
+            _yolo_model = YOLO(str(resolved_path))
+            print(f"✅ Custom model loaded successfully! Task: {getattr(_yolo_model, 'task', 'unknown')}, Classes: {_yolo_model.names}")
         else:
-            print("ℹ️ Custom best.pt not found yet. Using yolov8n.pt pretrained checkpoint.")
+            print("ℹ️ Custom best.pt not found. Falling back to yolov8n.pt pretrained checkpoint.")
             _yolo_model = YOLO("yolov8n.pt")
         return _yolo_model
     except Exception as e:
@@ -102,7 +128,10 @@ def run_hazard_detection(image_bytes: bytes) -> Dict[str, Any]:
             })
 
     # Severity formula based on physical size and detection frequency
-    if max_box_area_ratio > 0.20 or len(detections) >= 4 or top_confidence > 0.90:
+    if len(detections) == 0:
+        severity = "low"
+        top_confidence = 0.0
+    elif max_box_area_ratio > 0.20 or len(detections) >= 4 or top_confidence > 0.90:
         severity = "critical" if max_box_area_ratio > 0.35 else "high"
     elif max_box_area_ratio > 0.08 or len(detections) >= 2:
         severity = "medium"
@@ -112,9 +141,9 @@ def run_hazard_detection(image_bytes: bytes) -> Dict[str, Any]:
     return {
         "type": detected_type,
         "severity": severity,
-        "confidence": round(top_confidence, 3) if top_confidence else 0.75,
+        "confidence": round(top_confidence, 3) if top_confidence > 0 else 0.0,
         "detected_objects": detections,
-        "model_source": "custom_best_pt" if DEFAULT_WEIGHTS_PATH.exists() else "yolov8n"
+        "model_source": "custom_best_pt" if (DEFAULT_WEIGHTS_PATH.exists() or Path("D:/best.pt.zip").exists() or Path("D:/best.pt").exists()) else "yolov8n"
     }
 
 
