@@ -284,3 +284,4 @@ export default function UserGuideModal({ isOpen, onClose, onNavigate }) {
     </div>
   );
 }
+

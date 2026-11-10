@@ -135,9 +135,6 @@ export default function App() {
     <div className="app-shell">
       <div className="grain" aria-hidden="true" />
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0.75rem 1.25rem 0 1rem' }}>
-        <AuthBar currentUser={currentUser} onUserChange={setCurrentUser} />
-      </div>
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -146,6 +143,8 @@ export default function App() {
         onRefreshLocation={refreshLocation}
         onToggleDiscreet={() => setIsDiscreetMode(true)}
         onOpenGuide={() => setIsGuideOpen(true)}
+        currentUser={currentUser}
+        onUserChange={setCurrentUser}
       />
 
       <main style={{ flex: 1 }}>

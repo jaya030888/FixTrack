@@ -79,36 +79,46 @@ export default function AuthBar({ currentUser, onUserChange }) {
 
   return (
     <div style={{
-      display: 'flex',
+      display: 'inline-flex',
       alignItems: 'center',
-      gap: '0.75rem',
-      backgroundColor: '#f8fafc',
-      padding: '0.4rem 0.8rem',
-      borderRadius: '24px',
-      border: '1px solid #e2e8f0',
-      fontSize: '0.85rem'
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+      gap: '0.5rem',
+      backgroundColor: 'rgba(255, 255, 255, 0.85)',
+      padding: '0 0.65rem',
+      height: '34px',
+      borderRadius: '999px',
+      border: '1px solid var(--line)',
+      fontSize: '0.74rem',
+      boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease'
+    }}
+    onClick={() => setShowModal(true)}
+    title="Click to Switch Demo Account / Authority Role">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
         {currentUser?.role === 'authority' ? (
-          <Shield size={16} color="#0284c7" />
+          <Shield size={14} color="#0284c7" />
         ) : (
-          <User size={16} color="#e11d48" />
+          <User size={14} color="var(--coral)" />
         )}
-        <span style={{ fontWeight: '600', color: '#0f172a' }}>{currentUser?.name || 'Demo Citizen'}</span>
+        <span style={{ fontWeight: '600', color: 'var(--ink)' }}>
+          {currentUser?.name ? currentUser.name.split(' (')[0] : 'Ananya Sharma'}
+        </span>
       </div>
 
       {currentUser?.role === 'citizen' && (
         <span style={{
           backgroundColor: '#fef3c7',
           color: '#b45309',
-          padding: '0.15rem 0.5rem',
-          borderRadius: '12px',
+          padding: '2px 7px',
+          borderRadius: '999px',
           fontWeight: '700',
+          fontSize: '0.68rem',
+          fontFamily: 'var(--font-mono)',
           display: 'flex',
           alignItems: 'center',
-          gap: '0.25rem'
+          gap: '0.2rem'
         }}>
-          <Award size={12} /> {currentUser.civic_score} pts
+          <Award size={11} /> {currentUser.civic_score || 145}p
         </span>
       )}
 
@@ -116,28 +126,27 @@ export default function AuthBar({ currentUser, onUserChange }) {
         <span style={{
           backgroundColor: '#e0f2fe',
           color: '#0369a1',
-          padding: '0.15rem 0.5rem',
-          borderRadius: '12px',
-          fontWeight: '700'
+          padding: '2px 7px',
+          borderRadius: '999px',
+          fontWeight: '700',
+          fontSize: '0.68rem',
+          fontFamily: 'var(--font-mono)'
         }}>
-          Authority Mode
+          Admin
         </span>
       )}
 
-      <button
-        onClick={() => setShowModal(true)}
-        style={{
-          background: 'none',
-          border: 'none',
-          color: '#64748b',
-          cursor: 'pointer',
-          textDecoration: 'underline',
-          padding: '0 0.25rem',
-          fontSize: '0.8rem'
-        }}
-      >
+      <span style={{
+        fontSize: '0.66rem',
+        color: 'var(--ink-55)',
+        background: 'rgba(23, 21, 26, 0.05)',
+        padding: '2px 6px',
+        borderRadius: '999px',
+        fontWeight: 600,
+        marginLeft: '0.1rem'
+      }}>
         Switch
-      </button>
+      </span>
 
       {/* Account Switch Modal */}
       {showModal && (
