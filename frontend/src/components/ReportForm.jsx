@@ -5,7 +5,7 @@ import { getFriendlyErrorMessage } from '../services/errorHandler';
 
 export default function ReportForm({ userLocation, onIncidentCreated, onCancel }) {
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('harassment');
+  const [category, setCategory] = useState('pothole');
   const [severity, setSeverity] = useState('medium');
   const [address, setAddress] = useState('');
   const [latitude, setLatitude] = useState(userLocation?.latitude || 28.6139);
@@ -159,7 +159,7 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
         <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span>📢</span> Report Incident or Safety Hazard
               </h2>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
@@ -198,13 +198,15 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
                 Incident Category
               </label>
               <select value={category} onChange={(e) => setCategory(e.target.value)} className="input-field">
-                <option value="harassment">⚠️ Harassment / Catcalling</option>
-                <option value="stalking">👁️ Stalking / Being Followed</option>
-                <option value="unsafe_area">💡 Poor Lighting / Broken Streetlights</option>
-                <option value="theft">🚨 Snatching / Robbery</option>
-                <option value="physical_threat">⚔️ Physical Threat / Assault</option>
-                <option value="sos">🆘 Immediate Emergency / SOS</option>
+                <option value="pothole">🕳️ Road Pothole / Crater (YOLO Scanned)</option>
+                <option value="drains">🌊 Drainage Overflow / Waterlogging</option>
+                <option value="garbage">🗑️ Garbage Dump / Waste Accumulation</option>
+                <option value="street_light">💡 Broken Streetlight / Blackout Stretch</option>
+                <option value="harassment">⚠️ Harassment / Stalking / Catcalling</option>
+                <option value="unsafe_area">🌑 Secluded / Isolated Unsafe Corridor</option>
+                <option value="theft">🚨 Snatching / Robbery Hotspot</option>
                 <option value="safe_zone">🛡️ Verified Safe Zone / Police Post</option>
+                <option value="sos">🆘 Immediate Emergency / SOS</option>
               </select>
             </div>
 
@@ -291,7 +293,7 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
               gap: '0.5rem'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.8rem', fontWeight: '700', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <span style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <span>🧠</span> AI Threat Engine Real-time Analysis
                 </span>
                 {isAnalyzing ? (
@@ -309,7 +311,7 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
 
               {aiAnalysis && (
                 <div>
-                  <p style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                     {aiAnalysis.summary}
                   </p>
                   {aiAnalysis.keywords_detected?.length > 0 && (
@@ -375,12 +377,12 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
                 <div style={{ fontWeight: '700', color: '#38bdf8', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <span>🤖</span> YOLOv8 Vision AI Analysis
                 </div>
-                <div style={{ color: '#cbd5e1' }}>
+                <div style={{ color: 'var(--text-muted)' }}>
                   Detected {yoloDetection.count} hazard object(s) &bull; Severity: <span style={{ textTransform: 'uppercase', fontWeight: 'bold', color: yoloDetection.severity_assessment === 'high' ? '#ef4444' : '#f59e0b' }}>{yoloDetection.severity_assessment}</span>
                 </div>
                 <div style={{ marginTop: '0.35rem', display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                   {yoloDetection.detections?.map((d, i) => (
-                    <span key={i} style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 7px', borderRadius: '4px', fontSize: '0.72rem', color: '#fff' }}>
+                    <span key={i} style={{ background: 'rgba(255,90,61,0.1)', padding: '2px 7px', borderRadius: '4px', fontSize: '0.72rem', color: 'var(--text-main)' }}>
                       🏷️ {d.label} ({Math.round(d.confidence * 100)}%)
                     </span>
                   ))}

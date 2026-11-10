@@ -47,7 +47,7 @@ export default function AIAnalyzer() {
         
         {/* Header */}
         <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
-          <h2 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h2 style={{ fontSize: '1.35rem', fontWeight: '800', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span>🧠</span> AI Threat & Risk Assessment Engine
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
@@ -125,7 +125,7 @@ export default function AIAnalyzer() {
                 <span className={`badge ${result.risk_score >= 0.7 ? 'badge-critical' : result.risk_score >= 0.4 ? 'badge-high' : 'badge-low'}`}>
                   {result.flagged ? 'FLAGGED HIGH RISK' : 'NORMAL RISK TIER'}
                 </span>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '800', marginTop: '0.4rem', color: '#fff' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '800', marginTop: '0.4rem', color: 'var(--text-main)' }}>
                   Threat Risk Score: {Math.round(result.risk_score * 100)}%
                 </h3>
               </div>

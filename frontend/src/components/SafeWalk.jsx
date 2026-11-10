@@ -82,7 +82,7 @@ export default function SafeWalk({ userLocation, triggerSOS, emergencyContacts =
               <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 10px #10b981' }} />
               <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#10b981', letterSpacing: '0.05em' }}>SAFEWALK ACTIVE</span>
             </div>
-            <h3 style={{ fontSize: '1.3rem', fontWeight: '800', color: '#fff', marginTop: '0.2rem' }}>
+            <h3 style={{ fontSize: '1.3rem', fontWeight: '800', color: 'var(--text-main)', marginTop: '0.2rem' }}>
               Heading to: {destination}
             </h3>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
@@ -117,7 +117,7 @@ export default function SafeWalk({ userLocation, triggerSOS, emergencyContacts =
         <div className="glass-panel" style={{ padding: '1.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
             <span style={{ fontSize: '1.5rem' }}>🚶‍♀️</span>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#fff' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
               SafeWalk Guardian Timer
             </h2>
           </div>
@@ -184,7 +184,7 @@ export default function SafeWalk({ userLocation, triggerSOS, emergencyContacts =
         <div className="glass-panel" style={{ padding: '1.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
             <span style={{ fontSize: '1.5rem' }}>🛡️</span>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#fff' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
               Neighborhood Safety Index
             </h2>
           </div>
@@ -241,7 +241,7 @@ export default function SafeWalk({ userLocation, triggerSOS, emergencyContacts =
         <div className="glass-panel" style={{ padding: '1.75rem', gridColumn: '1 / -1' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
             <div>
-              <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span>🏥</span> Nearby 24/7 Verified Safe Havens
               </h2>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
@@ -272,7 +272,7 @@ export default function SafeWalk({ userLocation, triggerSOS, emergencyContacts =
                       {h.distance}
                     </span>
                   </div>
-                  <h4 style={{ fontSize: '0.9rem', fontWeight: '700', color: '#fff', marginTop: '0.2rem' }}>
+                  <h4 style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--text-main)', marginTop: '0.2rem' }}>
                     {h.name}
                   </h4>
                   <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>

@@ -61,7 +61,7 @@ export default function EmergencyContacts({ userLocation }) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 style={{ fontSize: '1.35rem', fontWeight: '800', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span>👥</span> Trusted Emergency Contacts
             </h2>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
@@ -79,7 +79,7 @@ export default function EmergencyContacts({ userLocation }) {
         {/* Add Contact Drawer / Form */}
         {showAddForm && (
           <form onSubmit={handleAddContact} style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-color)', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#fff' }}>Add New Guardian Contact</h3>
+            <h3 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-main)' }}>Add New Guardian Contact</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.3rem' }}>Contact Name</label>
@@ -173,7 +173,7 @@ export default function EmergencyContacts({ userLocation }) {
                     </div>
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <h4 style={{ fontSize: '0.95rem', fontWeight: '700', color: '#fff' }}>{c.name}</h4>
+                        <h4 style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-main)' }}>{c.name}</h4>
                         <span style={{ fontSize: '0.7rem', background: 'rgba(255,255,255,0.08)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)' }}>
                           {c.relation}
                         </span>

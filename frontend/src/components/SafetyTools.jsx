@@ -216,7 +216,7 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
             }}>
               👮
             </div>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#fff' }}>Police Inspector / Home</h2>
+            <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#fff8f3' }}>Police Inspector / Home</h2>
             <p style={{ color: '#94a3b8', fontSize: '1rem', marginTop: '0.3rem' }}>Incoming Call...</p>
           </div>
 
@@ -302,7 +302,7 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
 
         {/* High-Decibel Siren & Strobe */}
         <div className={`glass-panel ${isSirenPlaying ? 'siren-active' : ''}`} style={{ padding: '2rem', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#fff', marginBottom: '0.5rem' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.5rem' }}>
             🔊 High-Decibel Audio Siren
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
@@ -336,7 +336,7 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
         <div className="glass-panel" style={{ padding: '2rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <span style={{ fontSize: '1.4rem' }}>🎙️</span>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#fff' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
               Hands-Free Voice SOS
             </h2>
           </div>
@@ -361,7 +361,7 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
 
         {/* Fake Incoming Call Simulator */}
         <div className="glass-panel" style={{ padding: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#fff', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span>📞</span> Fake Incoming Call
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
@@ -398,7 +398,7 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
 
         {/* Emergency Helpline Directory */}
         <div className="glass-panel" style={{ padding: '2rem', gridColumn: '1 / -1' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#fff', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span>⚡</span> Direct Emergency Helplines
           </h2>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
@@ -425,7 +425,7 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{ fontWeight: '800', color: 'var(--primary)', fontSize: '1rem' }}>{item.number}</span>
-                    <span style={{ fontSize: '0.82rem', fontWeight: '600', color: '#fff' }}>{item.title}</span>
+                    <span style={{ fontSize: '0.82rem', fontWeight: '600', color: 'var(--text-main)' }}>{item.title}</span>
                   </div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{item.desc}</div>
                 </div>

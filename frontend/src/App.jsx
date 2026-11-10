@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/Navbar';
+import HomeLanding from './components/HomeLanding';
 import IncidentMap from './components/IncidentMap';
 import ReportForm from './components/ReportForm';
 import SafetyTools from './components/SafetyTools';
@@ -12,9 +13,10 @@ import PitchDemo from './components/PitchDemo';
 import AdvancedFeaturesShowcase from './components/AdvancedFeaturesShowcase';
 import AuthBar, { DEMO_ACCOUNTS } from './components/AuthBar';
 import { getIncidents, createIncident } from './services/api';
+import './index.css';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('incidents');
+  const [activeTab, setActiveTab] = useState('home');
   const [userLocation, setUserLocation] = useState(null);
   const [incidents, setIncidents] = useState([]);
   const [toast, setToast] = useState(null);
@@ -127,10 +129,10 @@ export default function App() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      
-      {/* Navigation */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0.5rem 1rem 0 1rem' }}>
+    <div className="app-shell">
+      <div className="grain" aria-hidden="true" />
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '0.75rem 1.25rem 0 1rem' }}>
         <AuthBar currentUser={currentUser} onUserChange={setCurrentUser} />
       </div>
       <Navbar
@@ -142,26 +144,36 @@ export default function App() {
         onToggleDiscreet={() => setIsDiscreetMode(true)}
       />
 
-      {/* Main Tab Content */}
       <main style={{ flex: 1 }}>
+        {activeTab === 'home' && (
+          <HomeLanding
+            onOpenMap={() => setActiveTab('incidents')}
+            onReport={() => setActiveTab('report')}
+            onSafeWalk={() => setActiveTab('safewalk')}
+          />
+        )}
         {activeTab === 'incidents' && (
           <IncidentMap
             incidents={incidents}
             userLocation={userLocation}
             onNewReportClick={() => setActiveTab('report')}
+            onStartSafeWalk={(dest) => {
+              setActiveTab('safewalk');
+            }}
+            showToast={showToast}
           />
         )}
 
         {activeTab === 'showcase' && (
-          <ShowcaseSuite />
+          <div className="scene-dark-wrap"><ShowcaseSuite /></div>
         )}
 
         {activeTab === 'ai-suite' && (
-          <AdvancedFeaturesShowcase userLocation={userLocation} />
+          <div className="scene-dark-wrap"><AdvancedFeaturesShowcase userLocation={userLocation} /></div>
         )}
 
         {activeTab === 'pitch' && (
-          <PitchDemo />
+          <div className="scene-dark-wrap"><PitchDemo /></div>
         )}
 
         {activeTab === 'safewalk' && (
@@ -214,8 +226,8 @@ export default function App() {
         }}>
           <div className="glass-panel" style={{ maxWidth: '520px', width: '100%', padding: '2rem', textAlign: 'center', border: '2px solid #ef4444' }}>
             <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🚨</div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#fca5a5' }}>EMERGENCY SOS LOGGED</h2>
-            <p style={{ color: '#cbd5e1', fontSize: '0.9rem', marginTop: '0.5rem', lineHeight: '1.5' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#b91c1c' }}>Emergency SOS logged</h2>
+            <p style={{ color: 'var(--ink-70)', fontSize: '0.9rem', marginTop: '0.5rem', lineHeight: '1.5' }}>
               Your distress beacon with live GPS coordinates has been saved to the incident registry.
             </p>
 
@@ -258,16 +270,8 @@ export default function App() {
       )}
 
       {/* Footer */}
-      <footer style={{
-        marginTop: 'auto',
-        borderTop: '1px solid var(--border-color)',
-        padding: '1.25rem',
-        textAlign: 'center',
-        fontSize: '0.78rem',
-        color: 'var(--text-dim)',
-        background: 'rgba(11, 15, 25, 0.8)'
-      }}>
-        <div>FixTrack (HerHack) &bull; AI Safety & Civic Incident Response Platform</div>
+      <footer className="site-footer">
+        FixTrack · HerHack 2026 · She builds what’s next
       </footer>
 
     </div>
