@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
-export default function HomeLanding({ onOpenMap, onReport, onSafeWalk }) {
+export default function HomeLanding({ onOpenMap, onReport, onSafeWalk, onOpenGuide }) {
   const [activeBeforeAfter, setActiveBeforeAfter] = useState('before');
 
   return (
-    <section className="hero" style={{ paddingBottom: '3.5rem' }}>
+    <section className="hero" style={{ padding: '2rem 1.5rem 5rem 1.5rem', maxWidth: '1320px', margin: '0 auto' }}>
       {/* Official HerHack 2026 Marquee Ticker */}
-      <div className="marquee" role="marquee" style={{ marginBottom: '2.5rem', background: 'var(--dark)', color: '#fff', padding: '0.8rem 0', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', boxShadow: 'var(--shadow-sm)' }}>
+      <div className="marquee" role="marquee" style={{ marginBottom: '3rem', background: 'var(--dark)', color: '#fff', padding: '0.9rem 0', borderRadius: '18px', border: '1px solid rgba(255,255,255,0.08)', boxShadow: 'var(--shadow-sm)' }}>
         <div className="marquee__track">
           <span className="marquee__item">YOLOv8 Edge Neural Vision Active</span>
           <span className="marquee__star" aria-hidden="true">✦</span>
@@ -37,14 +37,14 @@ export default function HomeLanding({ onOpenMap, onReport, onSafeWalk }) {
       </div>
 
       {/* Main Hero Grid */}
-      <div className="hero-grid" style={{ alignItems: 'center', gap: '3rem' }}>
+      <div className="hero-grid" style={{ alignItems: 'center', gap: 'clamp(32px, 5vw, 64px)' }}>
         <div>
-          <div className="eyebrow" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="eyebrow" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
             <span className="pulse-dot" />
             <span>FIXTRACK · HERHACK 2026 · FARIDABAD</span>
           </div>
 
-          <h1 className="hero__title" style={{ marginTop: '0.85rem', marginBottom: '1.25rem' }}>
+          <h1 className="hero__title" style={{ marginTop: '0.85rem', marginBottom: '1.4rem' }}>
             <span className="hero__line">SHE BUILDS</span>
             <span className="hero__line hero__line--alt">SMART ROADS.</span>
             <span className="hero__line">
@@ -52,24 +52,46 @@ export default function HomeLanding({ onOpenMap, onReport, onSafeWalk }) {
             </span>
           </h1>
 
-          <p className="hero__sub" style={{ marginBottom: '2rem' }}>
+          <p className="hero__sub" style={{ marginBottom: '2.4rem', fontSize: '1.15rem', lineHeight: 1.6 }}>
             A citizen-powered road intelligence platform: Snap potholes and hazards with your phone, let YOLOv8 classify depth and severity in under 1.2s, and hold municipal crews accountable through community before/after verification audits.
           </p>
 
-          <div className="hero-actions" style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
-            <button className="btn btn-primary" onClick={onReport} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.55rem' }}>
+          <div className="hero-actions" style={{ display: 'flex', gap: '0.95rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
+            <button className="btn btn-primary" onClick={onReport} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.55rem', padding: '14px 24px' }}>
               <span className="material-symbols-outlined" style={{ fontSize: 20 }}>photo_camera</span>
               <span>Report a Pothole</span>
               <span className="btn__arrow">→</span>
             </button>
-            <button className="btn btn-secondary" onClick={onOpenMap} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.55rem' }}>
+            <button className="btn btn-secondary" onClick={onOpenMap} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.55rem', padding: '14px 22px' }}>
               <span className="material-symbols-outlined" style={{ fontSize: 20 }}>radar</span>
               <span>Live Road Radar</span>
             </button>
-            <button className="btn btn-outline" onClick={onSafeWalk} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.55rem' }}>
+            <button className="btn btn-outline" onClick={onSafeWalk} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.55rem', padding: '14px 20px' }}>
               <span className="material-symbols-outlined" style={{ fontSize: 20, color: '#ff5a3d' }}>alt_route</span>
               <span>Safe Corridors</span>
             </button>
+            {onOpenGuide && (
+              <button
+                onClick={onOpenGuide}
+                style={{
+                  background: '#fff0eb',
+                  color: 'var(--coral)',
+                  border: '1.5px solid rgba(255,90,61,0.3)',
+                  padding: '14px 20px',
+                  borderRadius: '999px',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  transition: 'all 0.25s ease'
+                }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>menu_book</span>
+                <span>Simple User Guide</span>
+              </button>
+            )}
           </div>
 
           <div className="hero-meta" style={{ display: 'flex', flexWrap: 'wrap', gap: '1.25rem', fontSize: '0.82rem', color: 'var(--ink-70)' }}>

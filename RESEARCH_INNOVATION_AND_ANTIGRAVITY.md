@@ -105,3 +105,4 @@ In hackathons, teams typically build either a non-functional Figma UI or a raw b
 > 1. **PostGIS Geometry Indexing**: `GIST(location)` spatial indexes query thousands of nearby hazards in under 12 milliseconds.
 > 2. **30m Auto-Clustering**: 10,000 citizens reporting on the same damaged highway stretch collapse into 1 consolidated ticket with 10,000 confirmation votes, reducing municipal database clutter by 98%.
 > 3. **Decoupled Edge Microservices**: The Next.js frontend runs serverless on Vercel Edge, while the YOLOv8 model runs in an isolated containerized service, scaling horizontally with traffic spikes."*
+

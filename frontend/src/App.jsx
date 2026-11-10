@@ -13,6 +13,7 @@ import ShowcaseSuite from './components/ShowcaseSuite';
 import PitchDemo from './components/PitchDemo';
 import AdvancedFeaturesShowcase from './components/AdvancedFeaturesShowcase';
 import AuthBar, { DEMO_ACCOUNTS } from './components/AuthBar';
+import UserGuideModal from './components/UserGuideModal';
 import { getIncidents, createIncident } from './services/api';
 import './index.css';
 
@@ -23,6 +24,7 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const [sosModal, setSosModal] = useState(false);
   const [isDiscreetMode, setIsDiscreetMode] = useState(false);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem('fixtrack_user');
@@ -143,6 +145,7 @@ export default function App() {
         triggerSOS={handleTriggerSOS}
         onRefreshLocation={refreshLocation}
         onToggleDiscreet={() => setIsDiscreetMode(true)}
+        onOpenGuide={() => setIsGuideOpen(true)}
       />
 
       <main style={{ flex: 1 }}>
@@ -151,6 +154,7 @@ export default function App() {
             onOpenMap={() => setActiveTab('incidents')}
             onReport={() => setActiveTab('report')}
             onSafeWalk={() => setActiveTab('safewalk')}
+            onOpenGuide={() => setIsGuideOpen(true)}
           />
         )}
         {activeTab === 'research' && (
@@ -267,6 +271,16 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* Interactive Step-by-Step User Guide Modal */}
+      <UserGuideModal
+        isOpen={isGuideOpen}
+        onClose={() => setIsGuideOpen(false)}
+        onNavigate={(tab) => {
+          setActiveTab(tab);
+          setIsGuideOpen(false);
+        }}
+      />
 
       {/* Floating Toast notification */}
       {toast && (

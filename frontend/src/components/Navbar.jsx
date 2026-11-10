@@ -2,26 +2,21 @@ import React from 'react';
 
 const TABS = [
   { id: 'home', label: 'Home', icon: 'home' },
-  { id: 'research', label: 'Research & Innovation', icon: 'lightbulb', badge: 'Why Us' },
-  { id: 'incidents', label: 'Road Radar', icon: 'radar' },
-  { id: 'report', label: 'Report Hazard', icon: 'add_a_photo' },
-  { id: 'ai', label: 'Pothole AI', icon: 'smart_toy' },
-  { id: 'safewalk', label: 'SafeWalk', icon: 'shield_with_heart', badge: 'Women' },
-  { id: 'safety', label: 'Safety Tools', icon: 'security' },
-  { id: 'contacts', label: 'Guardians', icon: 'contact_phone' },
-  { id: 'showcase', label: 'Showcase', icon: 'verified' },
-  { id: 'pitch', label: 'Pitch Scene', icon: 'slideshow' }
+  { id: 'incidents', label: 'Live Road Radar', icon: 'radar' },
+  { id: 'report', label: 'Report a Hazard', icon: 'add_a_photo' },
+  { id: 'safewalk', label: 'Women Safety Hub', icon: 'shield_with_heart', badge: 'Safety' },
+  { id: 'research', label: 'Innovation & Research', icon: 'lightbulb' }
 ];
 
-export default function Navbar({ activeTab, setActiveTab, userLocation, triggerSOS, onRefreshLocation, onToggleDiscreet }) {
+export default function Navbar({ activeTab, setActiveTab, userLocation, triggerSOS, onRefreshLocation, onToggleDiscreet, onOpenGuide }) {
   return (
-    <header className="nav-pill">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.85rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }} onClick={() => setActiveTab('home')}>
+    <header className="nav-pill" style={{ padding: '0.85rem 1.4rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', cursor: 'pointer' }} onClick={() => setActiveTab('home')}>
           <div style={{
             background: 'linear-gradient(135deg, #ff5a3d, #c9f45a)',
-            width: 44,
-            height: 44,
+            width: 46,
+            height: 46,
             borderRadius: 14,
             display: 'flex',
             alignItems: 'center',
@@ -35,7 +30,7 @@ export default function Navbar({ activeTab, setActiveTab, userLocation, triggerS
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.2rem', fontWeight: 700, letterSpacing: '-0.04em' }}>
+              <span style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.04em' }}>
                 Fix<span style={{ color: 'var(--coral)' }}>Track</span>
               </span>
               <span style={{
@@ -51,13 +46,35 @@ export default function Navbar({ activeTab, setActiveTab, userLocation, triggerS
                 HERHACK 2026
               </span>
             </div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--ink-55)', fontWeight: 500 }}>
-              AI Pothole Radar & Civic Infrastructure Platform
+            <div style={{ fontSize: '0.74rem', color: 'var(--ink-55)', fontWeight: 500 }}>
+              AI Pothole Radar &amp; Civic Infrastructure Platform
             </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', fontSize: '0.8rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', fontSize: '0.8rem', flexWrap: 'wrap' }}>
+          {/* Quick Guide Button */}
+          {onOpenGuide && (
+            <button
+              onClick={onOpenGuide}
+              className="btn btn-secondary"
+              style={{
+                fontSize: '0.74rem',
+                padding: '0.45rem 0.95rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                background: '#fff0eb',
+                color: 'var(--coral)',
+                borderColor: 'rgba(255,90,61,0.3)',
+                fontWeight: 700
+              }}
+              title="Learn How to Use FixTrack in 4 Easy Steps">
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>menu_book</span>
+              <span>How It Works</span>
+            </button>
+          )}
+
           <div style={{
             background: 'var(--cream)',
             padding: '0.42rem 0.85rem',
@@ -103,7 +120,7 @@ export default function Navbar({ activeTab, setActiveTab, userLocation, triggerS
         </div>
       </div>
 
-      <nav className="nav-tabs" style={{ display: 'flex', gap: '0.4rem', marginTop: '0.85rem', overflowX: 'auto', paddingBottom: '0.2rem' }}>
+      <nav className="nav-tabs" style={{ display: 'flex', gap: '0.65rem', marginTop: '1rem', overflowX: 'auto', paddingBottom: '0.25rem' }}>
         {TABS.map(tab => (
           <button
             key={tab.id}
@@ -112,25 +129,29 @@ export default function Navbar({ activeTab, setActiveTab, userLocation, triggerS
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.4rem',
-              padding: '0.52rem 0.95rem',
+              gap: '0.45rem',
+              padding: '0.6rem 1.25rem',
               borderRadius: 999,
-              fontSize: '0.8rem',
-              fontWeight: 500,
+              fontSize: '0.84rem',
+              fontWeight: 600,
               cursor: 'pointer',
-              border: activeTab === tab.id ? '1px solid rgba(23, 21, 26, 0.9)' : '1px solid transparent'
+              border: activeTab === tab.id ? '1px solid rgba(23, 21, 26, 0.9)' : '1px solid var(--line)',
+              background: activeTab === tab.id ? 'var(--ink)' : 'var(--cream)',
+              color: activeTab === tab.id ? '#ffffff' : 'var(--ink-70)',
+              transition: 'all 0.2s ease',
+              boxShadow: activeTab === tab.id ? '0 4px 12px rgba(23, 21, 26, 0.2)' : 'none'
             }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 17, color: activeTab === tab.id ? 'var(--lime)' : 'inherit' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 18, color: activeTab === tab.id ? 'var(--lime)' : 'inherit' }}>
               {tab.icon}
             </span>
             <span>{tab.label}</span>
             {tab.badge && (
               <span style={{
-                fontSize: '0.58rem',
+                fontSize: '0.6rem',
                 fontFamily: 'var(--font-mono)',
                 background: activeTab === tab.id ? 'rgba(255,255,255,0.2)' : 'rgba(245, 184, 208, 0.35)',
                 color: activeTab === tab.id ? '#ffffff' : '#ab3360',
-                padding: '1px 6px',
+                padding: '2px 7px',
                 borderRadius: 999,
                 fontWeight: 700,
                 letterSpacing: '0.04em'

@@ -281,3 +281,4 @@ export default function ResearchInnovation({ onOpenMap, onReport, onSafeWalk }) 
     </div>
   );
 }
+
