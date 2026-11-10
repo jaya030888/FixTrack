@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/Navbar';
 import HomeLanding from './components/HomeLanding';
+import ResearchInnovation from './components/ResearchInnovation';
 import IncidentMap from './components/IncidentMap';
 import ReportForm from './components/ReportForm';
 import SafetyTools from './components/SafetyTools';
@@ -147,6 +148,13 @@ export default function App() {
       <main style={{ flex: 1 }}>
         {activeTab === 'home' && (
           <HomeLanding
+            onOpenMap={() => setActiveTab('incidents')}
+            onReport={() => setActiveTab('report')}
+            onSafeWalk={() => setActiveTab('safewalk')}
+          />
+        )}
+        {activeTab === 'research' && (
+          <ResearchInnovation
             onOpenMap={() => setActiveTab('incidents')}
             onReport={() => setActiveTab('report')}
             onSafeWalk={() => setActiveTab('safewalk')}

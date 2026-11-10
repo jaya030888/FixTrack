@@ -2,6 +2,7 @@ import React from 'react';
 
 const TABS = [
   { id: 'home', label: 'Home', icon: 'home' },
+  { id: 'research', label: 'Research & Innovation', icon: 'lightbulb', badge: 'Why Us' },
   { id: 'incidents', label: 'Road Radar', icon: 'radar' },
   { id: 'report', label: 'Report Hazard', icon: 'add_a_photo' },
   { id: 'ai', label: 'Pothole AI', icon: 'smart_toy' },
