@@ -6,7 +6,7 @@ BACKEND_ROOT = str(Path(__file__).resolve().parent)
 if BACKEND_ROOT not in sys.path:
     sys.path.insert(0, BACKEND_ROOT)
 
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from config import settings
 from database import supabase
@@ -34,14 +34,6 @@ app.include_router(incidents.router)
 app.include_router(reports.router)
 app.include_router(ai.router)
 app.include_router(civic.router)
-
-@app.get("/api/debug-path")
-def debug_path(request: Request):
-    return {
-        "url_path": request.url.path,
-        "scope_path": request.scope.get("path"),
-        "headers": dict(request.headers)
-    }
 
 @app.get("/")
 @app.get("/api")

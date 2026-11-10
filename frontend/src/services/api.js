@@ -16,6 +16,21 @@ const AI_SERVICE_URL = (typeof process !== 'undefined' && process.env?.NEXT_PUBL
 // Seed demo incidents for initial experience centered around common coordinates or user GPS
 const DEFAULT_INCIDENTS = [
   {
+    id: 'inc-pothole-01',
+    title: 'Severe 8-inch Deep Pothole Crater (YOLO Scanned)',
+    description: 'Deep asphalt cavity causing vehicular damage and high accident probability for two-wheelers. Scanned via YOLOv8 neural model.',
+    category: 'pothole',
+    severity: 'critical',
+    latitude: 28.6145,
+    longitude: 77.2095,
+    address: 'Sector 14 Mathura Road Junction',
+    status: 'open',
+    distance_meters: 180,
+    created_at: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
+    ai_risk_score: 0.95,
+    photo_urls: []
+  },
+  {
     id: 'inc-001',
     title: 'Broken Streetlights & Poor Visibility',
     description: 'The entire 200m stretch between Metro Gate 2 and Bus Stop is completely dark. High risk of stalking.',
