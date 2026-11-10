@@ -152,18 +152,19 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 1rem 3rem 1rem' }}>
-      <div className="glass-panel" style={{ padding: '2rem' }}>
+    <div style={{ maxWidth: '820px', margin: '0 auto', padding: '0 1rem 3rem 1rem' }}>
+      <div className="glass-panel" style={{ padding: '2.2rem', background: '#ffffff', borderRadius: 'var(--r-md)', border: '1px solid var(--line)', boxShadow: 'var(--shadow-md)' }}>
         
         {/* Header */}
-        <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '1.25rem', marginBottom: '1.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ borderBottom: '1px solid var(--line)', paddingBottom: '1.25rem', marginBottom: '1.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
             <div>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span>📢</span> Report Incident or Safety Hazard
+              <h2 style={{ fontSize: '1.45rem', fontWeight: '700', color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 26, color: 'var(--coral)' }}>add_a_photo</span>
+                Report Road Hazard &amp; Pothole
               </h2>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                Your report alerts the community and creates a verified PostGIS geolocated record.
+              <p style={{ fontSize: '0.85rem', color: 'var(--ink-55)', marginTop: '0.25rem' }}>
+                Your report triggers real-time YOLOv8 damage inspection and creates a PostGIS geocoded municipal ticket.
               </p>
             </div>
             {onCancel && (
@@ -174,16 +175,16 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.4rem' }}>
           
           {/* Title */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem', color: '#e2e8f0' }}>
-              Incident Title *
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.45rem', color: 'var(--ink)' }}>
+              Hazard Title *
             </label>
             <input
               type="text"
-              placeholder="e.g. Stalker following lone commuter near metro exit"
+              placeholder="e.g. Deep 8-inch pothole near Sector 15 Metro Station Pillar 42"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="input-field"
@@ -192,10 +193,10 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
           </div>
 
           {/* Category & Severity Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem', color: '#e2e8f0' }}>
-                Incident Category
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.45rem', color: 'var(--ink)' }}>
+                Hazard Category
               </label>
               <select value={category} onChange={(e) => setCategory(e.target.value)} className="input-field">
                 <option value="pothole">🕳️ Road Pothole / Crater (YOLO Scanned)</option>
@@ -211,12 +212,12 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem', color: '#e2e8f0' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.45rem', color: 'var(--ink)' }}>
                 Severity Level
               </label>
               <select value={severity} onChange={(e) => setSeverity(e.target.value)} className="input-field">
                 <option value="critical">🔴 Critical (Immediate Danger / Urgent)</option>
-                <option value="high">🟠 High Threat</option>
+                <option value="high">🟠 High Threat / Severe Crater</option>
                 <option value="medium">🟡 Medium Hazard</option>
                 <option value="low">🟢 Low / Informational</option>
               </select>
@@ -225,23 +226,24 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
 
           {/* Location Picker */}
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-              <label style={{ fontSize: '0.85rem', fontWeight: '600', color: '#e2e8f0' }}>
-                Location & Coordinates
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem' }}>
+              <label style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--ink)' }}>
+                Location &amp; Coordinates
               </label>
               <button
                 type="button"
                 onClick={handleFetchCurrentLocation}
                 className="btn btn-secondary"
-                style={{ fontSize: '0.75rem', padding: '0.25rem 0.65rem' }}>
-                📍 Use My Exact GPS
+                style={{ fontSize: '0.75rem', padding: '0.35rem 0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>my_location</span>
+                <span>Use My Exact GPS</span>
               </button>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '0.75rem' }}>
               <input
                 type="text"
-                placeholder="Street address or landmark..."
+                placeholder="Street address or nearest landmark..."
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 className="input-field"
@@ -269,12 +271,12 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
 
           {/* Description */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem', color: '#e2e8f0' }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.45rem', color: 'var(--ink)' }}>
               Detailed Description
             </label>
             <textarea
-              rows={4}
-              placeholder="Describe what occurred, descriptions of perpetrators or surroundings..."
+              rows={3}
+              placeholder="Describe road defect dimensions, traffic hazards, or surrounding risks..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="input-field"
@@ -331,27 +333,27 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
 
           {/* Photo / Evidence Upload */}
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.4rem', color: '#e2e8f0' }}>
-              Attach Photo / Evidence (Optional)
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.45rem', color: 'var(--ink)' }}>
+              Attach Photo / Road Defect Snapshot (Triggers Real YOLOv8 AI Scan)
             </label>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handlePhotoSelect}
-                style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}
+                style={{ fontSize: '0.85rem', color: 'var(--ink-70)' }}
               />
               {photoPreview && (
                 <div style={{ position: 'relative' }}>
                   <img
                     src={photoPreview}
                     alt="Preview"
-                    style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border-color)' }}
+                    style={{ width: '64px', height: '64px', objectFit: 'cover', borderRadius: '10px', border: '1px solid var(--line)', boxShadow: 'var(--shadow-sm)' }}
                   />
                   <button
                     type="button"
                     onClick={() => { setPhotoFile(null); setPhotoPreview(null); setYoloDetection(null); }}
-                    style={{ position: 'absolute', top: '-6px', right: '-6px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '50%', width: '18px', height: '18px', fontSize: '10px', cursor: 'pointer' }}>
+                    style={{ position: 'absolute', top: '-6px', right: '-6px', background: 'var(--coral)', color: '#fff', border: 'none', borderRadius: '50%', width: '20px', height: '20px', fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     ✕
                   </button>
                 </div>
@@ -360,29 +362,31 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
 
             {/* YOLOv8 Scanning Indicator & Result */}
             {isDetectingImage && (
-              <div style={{ fontSize: '0.75rem', color: '#38bdf8', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <span>🔍</span> Scanning image with YOLOv8 civic hazard model...
+              <div style={{ fontSize: '0.8rem', color: 'var(--coral)', marginTop: '0.65rem', display: 'flex', alignItems: 'center', gap: '0.45rem', fontFamily: 'var(--font-mono)' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 18, animation: 'radar-sweep 1.5s linear infinite' }}>progress_activity</span>
+                <span>Scanning image with YOLOv8 neural model (best.pt)...</span>
               </div>
             )}
 
             {yoloDetection && (
               <div style={{
-                marginTop: '0.6rem',
-                padding: '0.65rem 0.9rem',
-                background: 'rgba(14, 165, 233, 0.12)',
-                border: '1px solid rgba(14, 165, 233, 0.35)',
-                borderRadius: '8px',
-                fontSize: '0.78rem'
+                marginTop: '0.75rem',
+                padding: '0.85rem 1.1rem',
+                background: 'rgba(201, 244, 90, 0.15)',
+                border: '1px solid rgba(201, 244, 90, 0.6)',
+                borderRadius: '10px',
+                fontSize: '0.82rem'
               }}>
-                <div style={{ fontWeight: '700', color: '#38bdf8', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                  <span>🤖</span> YOLOv8 Vision AI Analysis
+                <div style={{ fontWeight: '700', color: 'var(--ink)', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 18, color: '#10b981' }}>check_circle</span>
+                  <span>YOLOv8 Vision AI Analysis Complete</span>
                 </div>
-                <div style={{ color: 'var(--text-muted)' }}>
-                  Detected {yoloDetection.count} hazard object(s) &bull; Severity: <span style={{ textTransform: 'uppercase', fontWeight: 'bold', color: yoloDetection.severity_assessment === 'high' ? '#ef4444' : '#f59e0b' }}>{yoloDetection.severity_assessment}</span>
+                <div style={{ color: 'var(--ink-70)' }}>
+                  Detected {yoloDetection.count} defect object(s) &bull; Severity: <strong style={{ textTransform: 'uppercase', color: yoloDetection.severity_assessment === 'high' ? 'var(--coral)' : '#10b981' }}>{yoloDetection.severity_assessment}</strong>
                 </div>
-                <div style={{ marginTop: '0.35rem', display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                <div style={{ marginTop: '0.45rem', display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
                   {yoloDetection.detections?.map((d, i) => (
-                    <span key={i} style={{ background: 'rgba(255,90,61,0.1)', padding: '2px 7px', borderRadius: '4px', fontSize: '0.72rem', color: 'var(--text-main)' }}>
+                    <span key={i} style={{ background: '#ffffff', border: '1px solid var(--line)', padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', color: 'var(--ink)', fontFamily: 'var(--font-mono)' }}>
                       🏷️ {d.label} ({Math.round(d.confidence * 100)}%)
                     </span>
                   ))}
@@ -398,10 +402,10 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
               id="anon-check"
               checked={isAnonymous}
               onChange={(e) => setIsAnonymous(e.target.checked)}
-              style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+              style={{ cursor: 'pointer', width: '16px', height: '16px', accentColor: 'var(--coral)' }}
             />
-            <label htmlFor="anon-check" style={{ fontSize: '0.85rem', color: 'var(--text-muted)', cursor: 'pointer' }}>
-              Submit anonymously (hide your user profile identity)
+            <label htmlFor="anon-check" style={{ fontSize: '0.85rem', color: 'var(--ink-70)', cursor: 'pointer' }}>
+              Submit anonymously (hide your citizen profile name from public radar)
             </label>
           </div>
 
@@ -410,11 +414,17 @@ export default function ReportForm({ userLocation, onIncidentCreated, onCancel }
             type="submit"
             disabled={submitting}
             className="btn btn-primary"
-            style={{ padding: '0.85rem', fontSize: '1rem', marginTop: '0.5rem', width: '100%' }}>
+            style={{ padding: '0.9rem', fontSize: '1rem', marginTop: '0.5rem', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
             {submitting ? (
-              <span>Submitting Report...</span>
+              <>
+                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>hourglass_empty</span>
+                <span>Submitting &amp; Geolocating...</span>
+              </>
             ) : (
-              <span>🚀 Submit Verified Safety Report</span>
+              <>
+                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>publish</span>
+                <span>Submit Verified Incident Report</span>
+              </>
             )}
           </button>
 

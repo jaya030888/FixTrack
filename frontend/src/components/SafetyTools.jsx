@@ -269,11 +269,12 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
         
         {/* Urgent Emergency SOS Panic Card */}
-        <div className="glass-panel" style={{ padding: '2rem', textAlign: 'center', border: '1px solid rgba(239, 68, 68, 0.4)' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#fca5a5', marginBottom: '0.5rem' }}>
-            🆘 One-Touch Emergency SOS
+        <div className="glass-panel" style={{ padding: '2.2rem', textAlign: 'center', border: '1.5px solid rgba(255, 90, 61, 0.4)', background: '#ffffff', borderRadius: 'var(--r-md)', boxShadow: 'var(--shadow-sm)' }}>
+          <h2 style={{ fontSize: '1.35rem', fontWeight: '700', color: 'var(--coral)', marginBottom: '0.45rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.45rem' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>emergency</span>
+            <span>One-Touch Emergency SOS</span>
           </h2>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+          <p style={{ fontSize: '0.85rem', color: 'var(--ink-55)', marginBottom: '1.75rem' }}>
             Broadcasts your GPS position, logs a critical incident, and prepares emergency notifications.
           </p>
 
@@ -281,31 +282,35 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
             onClick={triggerSOS}
             className="btn btn-danger animate-pulse-sos"
             style={{
-              width: '160px',
-              height: '160px',
+              width: '150px',
+              height: '150px',
               borderRadius: '50%',
-              fontSize: '1.5rem',
+              fontSize: '1.4rem',
               fontWeight: '900',
               margin: '0 auto',
               display: 'flex',
               flexDirection: 'column',
-              gap: '0.2rem'
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.25rem',
+              boxShadow: '0 0 35px rgba(255,90,61,0.5)'
             }}>
-            <span>🚨</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 36 }}>emergency</span>
             <span>SOS</span>
           </button>
 
-          <div style={{ marginTop: '1.5rem', fontSize: '0.78rem', color: 'var(--text-dim)' }}>
-            Location: {userLocation ? `${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)}` : 'Waiting for GPS...'}
+          <div style={{ marginTop: '1.5rem', fontSize: '0.78rem', color: 'var(--ink-55)', fontFamily: 'var(--font-mono)' }}>
+            Location: {userLocation ? `${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)}` : 'Acquiring GPS...'}
           </div>
         </div>
 
         {/* High-Decibel Siren & Strobe */}
-        <div className={`glass-panel ${isSirenPlaying ? 'siren-active' : ''}`} style={{ padding: '2rem', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.5rem' }}>
-            🔊 High-Decibel Audio Siren
+        <div className={`glass-panel ${isSirenPlaying ? 'siren-active' : ''}`} style={{ padding: '2.2rem', textAlign: 'center', background: '#ffffff', borderRadius: 'var(--r-md)', border: '1px solid var(--line)', boxShadow: 'var(--shadow-sm)' }}>
+          <h2 style={{ fontSize: '1.35rem', fontWeight: '700', color: 'var(--ink)', marginBottom: '0.45rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.45rem' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 24, color: 'var(--coral)' }}>volume_up</span>
+            <span>High-Decibel Audio Siren</span>
           </h2>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+          <p style={{ fontSize: '0.85rem', color: 'var(--ink-55)', marginBottom: '1.75rem' }}>
             Produces a piercing dual-tone alarm to attract public attention and disorient perpetrators.
           </p>
 
@@ -316,45 +321,52 @@ export default function SafetyTools({ userLocation, triggerSOS, emergencyContact
               width: '130px',
               height: '130px',
               borderRadius: '50%',
-              fontSize: '1.1rem',
-              fontWeight: '800',
+              fontSize: '1rem',
+              fontWeight: '700',
               margin: '0 auto',
               display: 'flex',
               flexDirection: 'column',
-              gap: '0.3rem'
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.35rem'
             }}>
-            <span style={{ fontSize: '1.8rem' }}>{isSirenPlaying ? '⏹️' : '📢'}</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 32 }}>
+              {isSirenPlaying ? 'stop' : 'campaign'}
+            </span>
             <span>{isSirenPlaying ? 'STOP SIREN' : 'START SIREN'}</span>
           </button>
 
-          <div style={{ marginTop: '1.5rem', fontSize: '0.78rem', color: isSirenPlaying ? '#ef4444' : 'var(--text-dim)' }}>
-            {isSirenPlaying ? 'SIREN ACTIVE: Turn volume to max' : 'Synthesized via HTML5 Web Audio'}
+          <div style={{ marginTop: '1.5rem', fontSize: '0.78rem', color: isSirenPlaying ? 'var(--coral)' : 'var(--ink-55)', fontFamily: 'var(--font-mono)' }}>
+            {isSirenPlaying ? 'SIREN ACTIVE: Turn volume to max' : 'Synthesized via Web Audio API'}
           </div>
         </div>
 
         {/* Hands-Free Voice SOS Listener */}
-        <div className="glass-panel" style={{ padding: '2rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <span style={{ fontSize: '1.4rem' }}>🎙️</span>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
+        <div className="glass-panel" style={{ padding: '2.2rem', background: '#ffffff', borderRadius: 'var(--r-md)', border: '1px solid var(--line)', boxShadow: 'var(--shadow-sm)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', marginBottom: '0.45rem' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 26, color: 'var(--coral)' }}>mic</span>
+            <h2 style={{ fontSize: '1.35rem', fontWeight: '700', color: 'var(--ink)' }}>
               Hands-Free Voice SOS
             </h2>
           </div>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
+          <p style={{ fontSize: '0.85rem', color: 'var(--ink-55)', marginBottom: '1.5rem' }}>
             Can't reach your screen? Activate hands-free voice guard. Shouting "Help" or "Bachao" immediately triggers SOS.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <button
               onClick={toggleVoiceSOS}
               className={`btn ${isListeningVoice ? 'btn-danger' : 'btn-secondary'}`}
-              style={{ width: '100%', padding: '0.8rem', justifyContent: 'center' }}>
-              {isListeningVoice ? '🔴 Stop Voice Guard (Listening Active)' : '🟢 Turn On Hands-Free Voice SOS'}
+              style={{ width: '100%', padding: '0.85rem', justifyContent: 'center', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>
+                {isListeningVoice ? 'mic_off' : 'mic'}
+              </span>
+              <span>{isListeningVoice ? 'Stop Voice Guard (Listening Active)' : 'Turn On Hands-Free Voice SOS'}</span>
             </button>
 
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', lineHeight: '1.4', background: 'rgba(15, 23, 42, 0.5)', padding: '0.65rem', borderRadius: '8px' }}>
-              <span>Trigger phrases:</span>
-              <strong style={{ color: '#f43f5e' }}> "Help", "Bachao", "Police", "Save me", "Madad"</strong>
+            <div style={{ fontSize: '0.78rem', color: 'var(--ink-70)', lineHeight: '1.5', background: 'var(--bg-secondary)', border: '1px solid var(--line)', padding: '0.75rem 1rem', borderRadius: '10px' }}>
+              <span>Trigger phrases: </span>
+              <strong style={{ color: 'var(--coral)', fontFamily: 'var(--font-mono)' }}>"Help", "Bachao", "Police", "Save me", "Madad"</strong>
             </div>
           </div>
         </div>

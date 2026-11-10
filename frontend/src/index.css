@@ -350,52 +350,61 @@ h1, h2, h3, h4 {
 .hero {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 1.5rem 1.25rem 3rem;
+  padding: 1.5rem 1.25rem 3.5rem;
   animation: rise-in 0.8s var(--ease-out);
 }
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: clamp(24px, 4vw, 64px);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(24px, 4vw, 56px);
   align-items: center;
 }
 
-.hero h1 {
-  font-size: clamp(2.6rem, 8vw, 6.4rem);
+.hero h1,
+.hero__title {
+  font-family: var(--font-sans);
+  font-size: clamp(2.8rem, 7.5vw, 5.8rem);
   text-transform: uppercase;
-  letter-spacing: -0.05em;
-  line-height: 0.86;
-  color: var(--ink-55);
+  font-weight: 700;
+  letter-spacing: -0.062em;
+  line-height: 0.84;
+  color: var(--ink);
 }
-.hero h1 em {
+.hero h1 em,
+.hero__title em,
+.hero__accent {
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 400;
   color: var(--coral);
   text-transform: none;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.015em;
+  margin-left: 0.04em;
 }
 
-.hero-lead {
+.hero-lead,
+.hero__sub {
   margin-top: 1.4rem;
-  font-size: clamp(1.05rem, 1rem + 0.4vw, 1.3rem);
+  font-size: clamp(1.05rem, 1rem + 0.3vw, 1.25rem);
   color: var(--ink-70);
-  max-width: 42ch;
+  max-width: 44ch;
+  line-height: 1.55;
+  font-weight: 400;
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1.75rem;
+  gap: 0.85rem;
+  margin-top: 1.85rem;
 }
 
 .hero-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.85rem;
-  margin-top: 1.25rem;
+  gap: 1rem;
+  margin-top: 1.5rem;
   font-size: 0.82rem;
   color: var(--ink-55);
 }
@@ -509,6 +518,323 @@ h1, h2, h3, h4 {
 .nav-tab.is-active {
   background: var(--ink);
   color: var(--cream);
+}
+
+/* ----------------------------------------------------
+   GOOGLE MATERIAL SYMBOLS INTEGRATION
+---------------------------------------------------- */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: 400;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  vertical-align: middle;
+}
+
+/* ----------------------------------------------------
+   ANIMATIONS & MICRO-INTERACTIONS
+---------------------------------------------------- */
+@keyframes scan-laser {
+  0% { top: 0%; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes radar-sweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ----------------------------------------------------
+   OFFICIAL HERHACK 2026 DESIGN SYSTEM & ANIMATIONS
+---------------------------------------------------- */
+@keyframes marq {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes pulse-lime {
+  0% { box-shadow: 0 0 0 0 rgba(201, 244, 90, 0.7); }
+  70% { box-shadow: 0 0 0 14px rgba(201, 244, 90, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(201, 244, 90, 0); }
+}
+
+@keyframes bb-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bb-breathe {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.07) translateY(-3px); }
+}
+
+@keyframes bb-sway {
+  0%, 100% { transform: rotate(-1.6deg) scale(1); }
+  50% { transform: rotate(1.8deg) scale(1.04); }
+}
+
+@keyframes cd-tick {
+  0% { transform: translateY(-5px) scale(0.97); color: var(--coral); opacity: 0.5; }
+  100% { transform: none; color: inherit; opacity: 1; }
+}
+
+/* Official HerHack Marquee */
+.marquee {
+  width: 100%;
+  overflow: hidden;
+  user-select: none;
+  display: flex;
+}
+.marquee__track {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  width: max-content;
+  animation: marq 24s linear infinite;
+  will-change: transform;
+}
+.marquee__item {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.marquee__star {
+  color: var(--coral);
+  font-size: 0.95rem;
+}
+
+/* Official HerHack Floating Labels */
+.float-label {
+  position: absolute;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 28px -10px rgba(23, 21, 26, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: floaty 4.5s ease-in-out infinite;
+  will-change: transform;
+}
+.float-label.is-coral { background: #fff0eb; color: var(--coral); border-color: rgba(255, 90, 61, 0.3); }
+.float-label.is-lime { background: #f4ffdc; color: #1c2405; border-color: rgba(201, 244, 90, 0.4); }
+.float-label.is-lavender { background: #f5f2ff; color: #322567; border-color: rgba(169, 149, 255, 0.3); }
+.float-label.is-pink { background: #fff0f6; color: #6d1b3c; border-color: rgba(245, 184, 208, 0.4); }
+
+.pulse-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--lime);
+  display: inline-block;
+  animation: pulse-lime 2.4s infinite;
+}
+
+/* Animated button arrow shift */
+.btn:hover .btn__arrow {
+  transform: translateX(5px);
+}
+.btn__arrow {
+  display: inline-flex;
+  transition: transform 0.35s var(--ease);
+}
+
+@keyframes grid-fade {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.35; }
+}
+
+/* Ticker Marquee */
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  background: var(--dark);
+  color: #fff;
+  padding: 0.65rem 0;
+  display: flex;
+  white-space: nowrap;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.ticker-content {
+  display: inline-flex;
+  gap: 2.5rem;
+  animation: marquee-scroll 32s linear infinite;
+  will-change: transform;
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+/* Pothole AI Scanner Display (Pure CSS + SVG, Zero Fake AI Images) */
+.scanner-viewport {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  background: radial-gradient(circle at 50% 50%, #201c24 0%, #121015 100%);
+  border-radius: var(--r-md);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  box-shadow: 0 25px 60px -20px rgba(0,0,0,0.5);
+}
+.scanner-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(201, 244, 90, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 244, 90, 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+  animation: grid-fade 4s ease-in-out infinite;
+}
+.scanner-laser-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--coral), #ff8a73, transparent);
+  box-shadow: 0 0 16px 2px var(--coral);
+  animation: scan-laser 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  z-index: 10;
+}
+.ai-bounding-box {
+  position: absolute;
+  border: 2px solid var(--coral);
+  background: rgba(255, 90, 61, 0.12);
+  border-radius: 6px;
+  box-shadow: 0 0 18px rgba(255, 90, 61, 0.35);
+  transition: all 0.3s ease;
+}
+.ai-bounding-box:hover {
+  background: rgba(255, 90, 61, 0.22);
+  box-shadow: 0 0 26px rgba(255, 90, 61, 0.6);
+}
+.ai-tag-pill {
+  position: absolute;
+  top: -24px;
+  left: -2px;
+  background: var(--coral);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Metric Stats Card */
+.metric-card-styled {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 1.35rem 1.25rem;
+  transition: all 0.3s var(--ease);
+  position: relative;
+  overflow: hidden;
+}
+.metric-card-styled:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 90, 61, 0.35);
+  box-shadow: 0 16px 36px -16px rgba(23, 21, 26, 0.15);
+  background: #ffffff;
+}
+
+/* Step Cards */
+.pipeline-step-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 1.75rem 1.5rem;
+  transition: all 0.3s var(--ease);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.pipeline-step-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--coral);
+  box-shadow: var(--shadow-md);
+  background: #ffffff;
+}
+
+/* Women Safe Corridor Callout Banner */
+.women-safe-banner {
+  background: linear-gradient(135deg, #2a1625 0%, #17151a 100%);
+  border: 1px solid rgba(245, 184, 208, 0.25);
+  border-radius: var(--r-lg);
+  padding: 2.2rem 2.4rem;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 24px 60px -20px rgba(42, 22, 37, 0.4);
+  margin: 3rem 0;
+}
+.women-safe-banner::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(245, 184, 208, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Before / After Verification Card */
+.resolution-audit-card {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  transition: all 0.3s var(--ease);
+  box-shadow: var(--shadow-sm);
+}
+.resolution-audit-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(201, 244, 90, 0.8);
+}
+
+@media (max-width: 900px) {
+  .hero-grid,
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+  .scanner-viewport { height: 300px; }
+  .women-safe-banner { padding: 1.5rem 1.25rem; }
+  .nav-pill { border-radius: 28px; }
 }
 
 @media (max-width: 900px) {

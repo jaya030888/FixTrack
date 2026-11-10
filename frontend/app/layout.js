@@ -22,13 +22,16 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "FixTrack · HerHack 2026",
-  description: "Women's safety, SafeWalk guardian, SOS, and civic incident radar.",
+  title: "FixTrack · AI Civic Pothole & Road Intelligence · HerHack 2026",
+  description: "AI-powered pothole hazard detection, YOLOv8 road severity scoring, verified municipal repairs, and safe transit corridors.",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`}>
+      <head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+      </head>
       <body style={{ fontFamily: "var(--font-sans), 'Space Grotesk', sans-serif" }}>{children}</body>
     </html>
   );

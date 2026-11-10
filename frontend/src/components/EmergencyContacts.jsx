@@ -55,37 +55,39 @@ export default function EmergencyContacts({ userLocation }) {
   };
 
   return (
-    <div style={{ maxWidth: '850px', margin: '0 auto', padding: '0 1rem 3rem 1rem' }}>
-      <div className="glass-panel" style={{ padding: '2rem' }}>
+    <div style={{ maxWidth: '880px', margin: '0 auto', padding: '0 1rem 3rem 1rem' }}>
+      <div className="glass-panel" style={{ padding: '2.2rem', background: '#ffffff', borderRadius: 'var(--r-md)', border: '1px solid var(--line)', boxShadow: 'var(--shadow-md)' }}>
         
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.75rem', borderBottom: '1px solid var(--line)', paddingBottom: '1.25rem', flexWrap: 'wrap', gap: '0.85rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.35rem', fontWeight: '800', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span>👥</span> Trusted Emergency Contacts
+            <h2 style={{ fontSize: '1.45rem', fontWeight: '700', color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 26, color: 'var(--coral)' }}>groups</span>
+              <span>Trusted Guardian Network</span>
             </h2>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-              These guardians receive one-click GPS distress messages whenever you trigger SOS.
+            <p style={{ fontSize: '0.85rem', color: 'var(--ink-55)', marginTop: '0.25rem' }}>
+              These verified emergency contacts receive instant GPS distress beacons with live coordinates when SOS is triggered.
             </p>
           </div>
           <button
             onClick={() => setShowAddForm(!showAddForm)}
             className="btn btn-primary"
-            style={{ fontSize: '0.82rem', padding: '0.45rem 0.9rem' }}>
-            {showAddForm ? '✕ Close' : '+ Add Contact'}
+            style={{ fontSize: '0.82rem', padding: '0.5rem 1rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>{showAddForm ? 'close' : 'person_add'}</span>
+            <span>{showAddForm ? 'Close' : 'Add Guardian'}</span>
           </button>
         </div>
 
         {/* Add Contact Drawer / Form */}
         {showAddForm && (
-          <form onSubmit={handleAddContact} style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-color)', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h3 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--text-main)' }}>Add New Guardian Contact</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
+          <form onSubmit={handleAddContact} style={{ background: 'var(--bg-secondary)', padding: '1.5rem', borderRadius: '14px', border: '1px solid var(--line)', marginBottom: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--ink)' }}>Add New Guardian Contact</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '1rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.3rem' }}>Contact Name</label>
+                <label style={{ display: 'block', fontSize: '0.82rem', color: 'var(--ink-70)', marginBottom: '0.4rem', fontWeight: 600 }}>Contact Name</label>
                 <input
                   type="text"
-                  placeholder="e.g. Papa, Sister, Rohit"
+                  placeholder="e.g. Papa, Sister, Pooja"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="input-field"
@@ -93,7 +95,7 @@ export default function EmergencyContacts({ userLocation }) {
                 />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.3rem' }}>Phone Number (with country code)</label>
+                <label style={{ display: 'block', fontSize: '0.82rem', color: 'var(--ink-70)', marginBottom: '0.4rem', fontWeight: 600 }}>Phone Number (with Country Code)</label>
                 <input
                   type="tel"
                   placeholder="+919876543210"
@@ -104,7 +106,7 @@ export default function EmergencyContacts({ userLocation }) {
                 />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.3rem' }}>Relationship</label>
+                <label style={{ display: 'block', fontSize: '0.82rem', color: 'var(--ink-70)', marginBottom: '0.4rem', fontWeight: 600 }}>Relationship</label>
                 <select value={relation} onChange={(e) => setRelation(e.target.value)} className="input-field">
                   <option value="Family">Family / Parents</option>
                   <option value="Friend">Friend / Roommate</option>
@@ -114,7 +116,7 @@ export default function EmergencyContacts({ userLocation }) {
                 </select>
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '0.3rem' }}>Preferred Channel</label>
+                <label style={{ display: 'block', fontSize: '0.82rem', color: 'var(--ink-70)', marginBottom: '0.4rem', fontWeight: 600 }}>Preferred Channel</label>
                 <select value={channel} onChange={(e) => setChannel(e.target.value)} className="input-field">
                   <option value="whatsapp">WhatsApp Instant Alert</option>
                   <option value="sms">SMS Text Message</option>
@@ -122,19 +124,19 @@ export default function EmergencyContacts({ userLocation }) {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary" style={{ alignSelf: 'flex-start', padding: '0.5rem 1.25rem' }}>
-              Save Guardian
+            <button type="submit" className="btn btn-primary" style={{ alignSelf: 'flex-start', padding: '0.65rem 1.5rem' }}>
+              Save Guardian Contact
             </button>
           </form>
         )}
 
         {/* Contacts List */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {contacts.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
-              <p style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🛡️</p>
-              <p>No emergency contacts added yet.</p>
-              <p style={{ fontSize: '0.8rem', marginTop: '0.25rem' }}>Add trusted contacts above so they can be notified in 1-click during an emergency.</p>
+            <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--ink-55)' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 44, color: 'var(--coral)', marginBottom: '0.5rem' }}>shield</span>
+              <p style={{ fontWeight: 600 }}>No emergency contacts added yet.</p>
+              <p style={{ fontSize: '0.82rem', marginTop: '0.25rem' }}>Add trusted contacts above so they can be notified in 1-click during an emergency.</p>
             </div>
           ) : (
             contacts.map(c => {
@@ -151,61 +153,65 @@ export default function EmergencyContacts({ userLocation }) {
                     justifyContent: 'space-between',
                     flexWrap: 'wrap',
                     gap: '1rem',
-                    padding: '1rem 1.25rem',
-                    borderRadius: '10px',
-                    background: 'rgba(15, 23, 42, 0.5)',
-                    border: '1px solid var(--border-color)'
+                    padding: '1.1rem 1.4rem',
+                    borderRadius: '12px',
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--line)',
+                    transition: 'all 0.2s ease'
                   }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <div style={{
-                      width: '44px',
-                      height: '44px',
+                      width: '46px',
+                      height: '46px',
                       borderRadius: '50%',
-                      background: 'rgba(244, 63, 94, 0.15)',
-                      color: 'var(--primary)',
+                      background: 'rgba(255, 90, 61, 0.12)',
+                      color: 'var(--coral)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontWeight: '800',
-                      fontSize: '1.1rem'
+                      fontWeight: '700',
+                      fontSize: '1.2rem',
+                      fontFamily: 'var(--font-mono)'
                     }}>
                       {c.name.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <h4 style={{ fontSize: '0.95rem', fontWeight: '700', color: 'var(--text-main)' }}>{c.name}</h4>
-                        <span style={{ fontSize: '0.7rem', background: 'rgba(255,255,255,0.08)', padding: '2px 6px', borderRadius: '4px', color: 'var(--text-muted)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                        <h4 style={{ fontSize: '1rem', fontWeight: '700', color: 'var(--ink)' }}>{c.name}</h4>
+                        <span style={{ fontSize: '0.72rem', background: 'var(--bg-secondary)', border: '1px solid var(--line)', padding: '2px 8px', borderRadius: 999, color: 'var(--ink-70)', fontWeight: 600 }}>
                           {c.relation}
                         </span>
                       </div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-dim)', marginTop: '0.15rem' }}>
+                      <div style={{ fontSize: '0.82rem', color: 'var(--ink-55)', marginTop: '0.2rem', fontFamily: 'var(--font-mono)' }}>
                         {c.phone}
                       </div>
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
                     <a
                       href={waLink}
                       target="_blank"
                       rel="noreferrer"
                       className="btn"
-                      style={{ background: '#25D366', color: '#fff', fontSize: '0.78rem', padding: '0.4rem 0.75rem' }}>
-                      💬 WhatsApp SOS
+                      style={{ background: '#25D366', color: '#fff', fontSize: '0.78rem', padding: '0.45rem 0.85rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem', border: 'none' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chat</span>
+                      <span>WhatsApp SOS</span>
                     </a>
 
                     <a
                       href={smsLink}
                       className="btn btn-secondary"
-                      style={{ fontSize: '0.78rem', padding: '0.4rem 0.75rem' }}>
-                      ✉️ SMS Alert
+                      style={{ fontSize: '0.78rem', padding: '0.45rem 0.85rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>sms</span>
+                      <span>SMS Alert</span>
                     </a>
 
                     <button
                       onClick={() => handleDeleteContact(c.id)}
                       title="Remove Contact"
-                      style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.4rem' }}>
-                      🗑️
+                      style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.4rem', display: 'flex', alignItems: 'center' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 20 }}>delete</span>
                     </button>
                   </div>
                 </div>

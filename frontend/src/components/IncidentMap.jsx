@@ -98,25 +98,25 @@ export default function IncidentMap({
       {/* =========================================================================
        * PILLAR 3 & 4: DEPARTURE & ARRIVAL DUAL ROUTING (FASTEST VS. SAFEST PATH)
        * ========================================================================= */}
-      <section className="glass-panel" style={{ padding: '1.4rem', marginBottom: '1.4rem', border: '1.5px solid rgba(255, 90, 61, 0.25)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
+      <section className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem', border: '1.5px solid rgba(255, 90, 61, 0.25)', background: '#ffffff', borderRadius: 'var(--r-md)', boxShadow: 'var(--shadow-sm)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.85rem', marginBottom: '1.25rem' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.3rem' }}>🛣️</span>
-              <h2 style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--ink)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 26, color: 'var(--coral)' }}>alt_route</span>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--ink)' }}>
                 Safe Transit Pathfinder · <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', color: 'var(--coral)' }}>Fastest vs. Safest Path</span>
               </h2>
               <span className="float-label is-lime" style={{ position: 'static', padding: '3px 9px', fontSize: '0.65rem' }}>
                 POSTGIS DUAL-ROUTING
               </span>
             </div>
-            <p style={{ fontSize: '0.8rem', color: 'var(--ink-70)', marginTop: '0.2rem' }}>
+            <p style={{ fontSize: '0.82rem', color: 'var(--ink-70)', marginTop: '0.25rem' }}>
               Enter departure and arrival to compare the shortest route against illuminated, police-patrolled safe corridors.
             </p>
           </div>
 
           {/* Quick Route Mode Switcher */}
-          <div style={{ display: 'flex', background: '#fff', padding: '4px', borderRadius: '999px', border: '1px solid var(--line-2)' }}>
+          <div style={{ display: 'flex', background: 'var(--bg-secondary)', padding: '4px', borderRadius: '999px', border: '1px solid var(--line)' }}>
             <button
               onClick={() => { setRoutingMode('fast'); setIsRoutingActive(true); }}
               style={{
@@ -127,10 +127,15 @@ export default function IncidentMap({
                 fontWeight: 700,
                 border: 'none',
                 cursor: 'pointer',
-                background: routingMode === 'fast' && isRoutingActive ? 'var(--dark)' : 'transparent',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                transition: 'all 0.2s ease',
+                background: routingMode === 'fast' && isRoutingActive ? 'var(--ink)' : 'transparent',
                 color: routingMode === 'fast' && isRoutingActive ? '#fff' : 'var(--ink-70)'
               }}>
-              ⚡ Fastest Route
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>bolt</span>
+              Fastest Route
             </button>
             <button
               onClick={() => { setRoutingMode('safe'); setIsRoutingActive(true); }}
@@ -142,10 +147,15 @@ export default function IncidentMap({
                 fontWeight: 700,
                 border: 'none',
                 cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                transition: 'all 0.2s ease',
                 background: routingMode === 'safe' && isRoutingActive ? 'var(--coral)' : 'transparent',
-                color: routingMode === 'safe' && isRoutingActive ? '#220c05' : 'var(--ink-70)'
+                color: routingMode === 'safe' && isRoutingActive ? '#ffffff' : 'var(--ink-70)'
               }}>
-              🛡️ Women-Special Safe Corridor
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>shield_with_heart</span>
+              Women-Special Safe Corridor
             </button>
           </div>
         </div>
@@ -155,7 +165,7 @@ export default function IncidentMap({
           {/* Departure Input */}
           <div>
             <label style={{ display: 'block', fontSize: '0.72rem', fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-70)', marginBottom: '0.3rem' }}>
-              📍 Departure (Origin)
+              Departure (Origin)
             </label>
             <div style={{ display: 'flex', gap: '0.4rem' }}>
               <input
@@ -176,8 +186,9 @@ export default function IncidentMap({
                 }}
                 className="btn btn-secondary"
                 title="Use Current GPS"
-                style={{ padding: '0.65rem 0.85rem', fontSize: '0.72rem' }}>
-                📍 GPS
+                style={{ padding: '0.65rem 0.85rem', fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>my_location</span>
+                <span>GPS</span>
               </button>
             </div>
           </div>
@@ -185,7 +196,7 @@ export default function IncidentMap({
           {/* Arrival Input with Presets */}
           <div>
             <label style={{ display: 'block', fontSize: '0.72rem', fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-70)', marginBottom: '0.3rem' }}>
-              🎯 Arrival (Destination)
+              Arrival (Destination)
             </label>
             <select
               value={destination}
@@ -208,8 +219,9 @@ export default function IncidentMap({
                 showToast(`🛣️ Calculating ${routingMode === 'safe' ? 'Safest Women Corridor' : 'Fastest Commute'} via PostGIS...`, 'info');
               }}
               className="btn btn-primary"
-              style={{ padding: '0.72rem 1.4rem' }}>
-              {isRoutingActive ? 'Recalculate Route' : 'Find Best Route →'}
+              style={{ padding: '0.72rem 1.4rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>route</span>
+              <span>{isRoutingActive ? 'Recalculate Route' : 'Find Best Route →'}</span>
             </button>
           </div>
         </div>
@@ -217,8 +229,8 @@ export default function IncidentMap({
         {/* Live Active Route Comparison Banner */}
         {isRoutingActive && (
           <div style={{
-            marginTop: '1.1rem',
-            padding: '1rem 1.25rem',
+            marginTop: '1.25rem',
+            padding: '1.1rem 1.35rem',
             borderRadius: '16px',
             background: routingMode === 'safe' ? 'rgba(201, 244, 90, 0.22)' : 'rgba(255, 90, 61, 0.1)',
             border: `1.5px solid ${routingMode === 'safe' ? 'rgba(105, 145, 20, 0.35)' : 'rgba(255, 90, 61, 0.35)'}`,
@@ -237,11 +249,11 @@ export default function IncidentMap({
                 borderRadius: 12,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 800,
-                fontSize: '1.2rem'
+                justifyContent: 'center'
               }}>
-                {routingMode === 'safe' ? '🛡️' : '⚡'}
+                <span className="material-symbols-outlined" style={{ fontSize: 24 }}>
+                  {routingMode === 'safe' ? 'shield_with_heart' : 'bolt'}
+                </span>
               </div>
               <div>
                 <div style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--ink)' }}>
@@ -262,8 +274,9 @@ export default function IncidentMap({
                 <button
                   onClick={() => onStartSafeWalk(destination)}
                   className="btn btn-primary"
-                  style={{ fontSize: '0.74rem', padding: '0.55rem 1rem' }}>
-                  🚶‍♀️ Start SafeWalk Companion
+                  style={{ fontSize: '0.74rem', padding: '0.55rem 1.1rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>directions_walk</span>
+                  <span>Start SafeWalk Companion</span>
                 </button>
               )}
             </div>
@@ -514,18 +527,19 @@ export default function IncidentMap({
 
               {/* Verification Decision Box */}
               <div style={{
-                background: 'var(--bg)',
-                borderRadius: '12px',
-                padding: '0.85rem 1rem',
+                background: 'var(--bg-secondary)',
+                borderRadius: '14px',
+                padding: '1rem 1.15rem',
                 border: '1px solid var(--line)',
-                marginBottom: '0.85rem'
+                marginBottom: '0.95rem'
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
                   <div>
-                    <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--ink)' }}>
-                      🔍 Closed-Loop Verification: Is this problem solved?
+                    <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'var(--coral)' }}>verified</span>
+                      <span>Closed-Loop Verification: Is this problem solved?</span>
                     </div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--ink-55)' }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--ink-55)', marginTop: '0.15rem' }}>
                       Confirming repairs on the ground prevents municipal contractor fraud. Earn +15 Civic Points.
                     </div>
                   </div>
@@ -534,39 +548,54 @@ export default function IncidentMap({
                     <button
                       onClick={() => handleVoteResolution(activeIncident.id, 'fixed')}
                       style={{
-                        padding: '6px 12px',
+                        padding: '6px 14px',
                         borderRadius: '999px',
-                        fontSize: '0.74rem',
+                        fontSize: '0.75rem',
                         fontWeight: 700,
                         border: '1px solid #10b981',
                         cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        transition: 'all 0.2s ease',
                         background: verificationVotes[activeIncident.id] === 'fixed' ? '#10b981' : '#fff',
                         color: verificationVotes[activeIncident.id] === 'fixed' ? '#fff' : '#10b981'
                       }}>
-                      👍 Fixed (Verify Repair)
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>thumb_up</span>
+                      <span>Fixed (Verify Repair)</span>
                     </button>
                     <button
                       onClick={() => handleVoteResolution(activeIncident.id, 'broken')}
                       style={{
-                        padding: '6px 12px',
+                        padding: '6px 14px',
                         borderRadius: '999px',
-                        fontSize: '0.74rem',
+                        fontSize: '0.75rem',
                         fontWeight: 700,
                         border: '1px solid #ef4444',
                         cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        transition: 'all 0.2s ease',
                         background: verificationVotes[activeIncident.id] === 'broken' ? '#ef4444' : '#fff',
                         color: verificationVotes[activeIncident.id] === 'broken' ? '#fff' : '#ef4444'
                       }}>
-                      👎 Still Broken (Dispute)
+                      <span className="material-symbols-outlined" style={{ fontSize: 16 }}>thumb_down</span>
+                      <span>Still Broken (Dispute)</span>
                     </button>
                   </div>
                 </div>
 
                 {verificationVotes[activeIncident.id] && (
-                  <div style={{ marginTop: '0.5rem', fontSize: '0.74rem', color: verificationVotes[activeIncident.id] === 'fixed' ? '#047857' : '#b91c1c', fontWeight: 700 }}>
-                    {verificationVotes[activeIncident.id] === 'fixed'
-                      ? '✓ Verified by you: Repair confirmed on ground. Contractor ticket approved.'
-                      : '⚠️ Disputed by you: Defect still present. Sent back to municipal engineer audit queue.'}
+                  <div style={{ marginTop: '0.65rem', fontSize: '0.75rem', color: verificationVotes[activeIncident.id] === 'fixed' ? '#047857' : '#b91c1c', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                      {verificationVotes[activeIncident.id] === 'fixed' ? 'check_circle' : 'error'}
+                    </span>
+                    <span>
+                      {verificationVotes[activeIncident.id] === 'fixed'
+                        ? 'Verified by you: Repair confirmed on ground. Contractor ticket approved.'
+                        : 'Disputed by you: Defect still present. Sent back to municipal engineer audit queue.'}
+                    </span>
                   </div>
                 )}
               </div>

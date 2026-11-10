@@ -114,20 +114,20 @@ export default function SafeWalk({ userLocation, triggerSOS, emergencyContacts =
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
         
         {/* Setup SafeWalk Journey Card */}
-        <div className="glass-panel" style={{ padding: '1.75rem' }}>
+        <div className="glass-panel" style={{ padding: '2rem', background: '#ffffff', borderRadius: 'var(--r-md)', border: '1px solid var(--line)', boxShadow: 'var(--shadow-sm)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-            <span style={{ fontSize: '1.5rem' }}>🚶‍♀️</span>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
-              SafeWalk Guardian Timer
+            <span className="material-symbols-outlined" style={{ fontSize: 26, color: 'var(--coral)' }}>directions_walk</span>
+            <h2 style={{ fontSize: '1.3rem', fontWeight: '700', color: 'var(--ink)' }}>
+              SafeWalk Guardian Companion
             </h2>
           </div>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
-            Set a timed companion for late-night walks, cab rides, or commuting through isolated stretches.
+          <p style={{ fontSize: '0.85rem', color: 'var(--ink-55)', marginBottom: '1.5rem' }}>
+            Set a timed companion for late-night walks, cab commutes, or navigating through poorly-lit municipal corridors.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', marginBottom: '0.35rem', color: '#e2e8f0' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.45rem', color: 'var(--ink)' }}>
                 Your Destination
               </label>
               <input
@@ -141,7 +141,7 @@ export default function SafeWalk({ userLocation, triggerSOS, emergencyContacts =
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', marginBottom: '0.35rem', color: '#e2e8f0' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.45rem', color: 'var(--ink)' }}>
                 Expected Travel Time: {durationMinutes} Minutes
               </label>
               <input
@@ -152,9 +152,9 @@ export default function SafeWalk({ userLocation, triggerSOS, emergencyContacts =
                 value={durationMinutes}
                 onChange={(e) => setDurationMinutes(Number(e.target.value))}
                 disabled={journeyActive}
-                style={{ width: '100%', accentColor: 'var(--primary)', cursor: 'pointer' }}
+                style={{ width: '100%', accentColor: 'var(--coral)', cursor: 'pointer' }}
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--text-dim)', marginTop: '0.2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--ink-55)', marginTop: '0.2rem', fontFamily: 'var(--font-mono)' }}>
                 <span>5 mins</span>
                 <span>30 mins</span>
                 <span>60 mins</span>
@@ -166,14 +166,15 @@ export default function SafeWalk({ userLocation, triggerSOS, emergencyContacts =
               <button
                 onClick={startJourney}
                 className="btn btn-primary"
-                style={{ padding: '0.75rem', width: '100%', marginTop: '0.5rem' }}>
-                🛡️ Start SafeWalk Watch
+                style={{ padding: '0.85rem', width: '100%', marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>shield</span>
+                <span>Start SafeWalk Watch</span>
               </button>
             ) : (
               <button
                 onClick={endJourneySafely}
                 className="btn btn-secondary"
-                style={{ padding: '0.75rem', width: '100%' }}>
+                style={{ padding: '0.85rem', width: '100%' }}>
                 Cancel SafeWalk
               </button>
             )}
